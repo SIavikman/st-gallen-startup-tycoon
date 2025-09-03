@@ -386,7 +386,9 @@ def internal_error(error):
 def bad_request_error(error):
     return jsonify({'error': 'Ungültige Anfrage'}), 400
 
+# Datenbank bei jedem App-Start initialisieren (auch für Gunicorn)
+init_db()
+
 if __name__ == '__main__':
-    init_db()
     port = int(os.environ.get('PORT', 5000))
     app.run(debug=False, host='0.0.0.0', port=port)
