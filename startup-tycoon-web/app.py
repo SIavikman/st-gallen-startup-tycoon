@@ -3,6 +3,7 @@ import sqlite3
 import random
 from datetime import datetime
 
+# Deploy test
 # Import the game classes
 from startup_tycoon_main import Company, ActionType, StartupTycoonGame, Loan
 from swiss_events_manager import SwissEventManager
@@ -386,4 +387,5 @@ def bad_request_error(error):
 
 if __name__ == '__main__':
     init_db()
+
     app.run(debug=True)
