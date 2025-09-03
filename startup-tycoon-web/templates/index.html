@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block content %}
+<div style="text-align: center;">
+    <h1>🏔️ St. Gallen Startup Tycoon</h1>
+    
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin: 2rem 0;">
+        <div style="background: #f8f9fa; padding: 2rem; border-radius: 10px; border: 2px solid #dee2e6;">
+            <h3>🎯 Game Features</h3>
+            <ul style="text-align: left; line-height: 1.8;">
+                <li>Start with 10,000 CHF in beautiful St. Gallen</li>
+                <li>Survive 12 challenging months</li>
+                <li>Navigate Swiss events and HSG culture</li>
+                <li>Build customers, reputation & quality</li>
+                <li>Compete on the global leaderboard</li>
+            </ul>
+        </div>
+        
+        <div style="background: #f8f9fa; padding: 2rem; border-radius: 10px; border: 2px solid #dee2e6;">
+            <h3>🎮 How to Play</h3>
+            <ul style="text-align: left; line-height: 1.8;">
+                <li>Choose 1 action each month</li>
+                <li>Random Swiss events will occur</li>
+                <li>Manage your finances carefully</li>
+                <li>Build the highest scoring company</li>
+                <li>Don't go bankrupt!</li>
+            </ul>
+        </div>
+    </div>
+    
+    <div style="margin: 3rem 0;">
+        <h2>🚀 Start Your St. Gallen Adventure</h2>
+        
+        {% if request.args.get('error') %}
+        <div class="alert alert-danger">
+            ⚠️ {{ request.args.get('error') }}
+        </div>
+        {% endif %}
+        
+        <form action="/start_game" method="post" style="max-width: 400px; margin: 0 auto;">
+            <div style="margin-bottom: 1rem;">
+                <label for="player_name" style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Your Entrepreneur Name:</label>
+                <input type="text" 
+                       id="player_name" 
+                       name="player_name" 
+                       placeholder="Enter your name..."
+                       style="width: 100%; padding: 12px; border: 2px solid #dee2e6; border-radius: 8px; font-size: 16px;"
+                       required
+                       maxlength="20">
+            </div>
+            
+            <button type="submit" class="btn" style="font-size: 18px; padding: 15px 30px;">
+                🎲 Start New Game
+            </button>
+        </form>
+    </div>
+    
+    <div style="margin-top: 3rem; padding: 2rem; background: #e3f2fd; border-radius: 10px;">
+        <h3>🏆 Current Champions</h3>
+        <p>Check out our <a href="/leaderboard" class="btn btn-success">Leaderboard</a> to see who rules St. Gallen!</p>
+    </div>
+</div>
+{% endblock %}

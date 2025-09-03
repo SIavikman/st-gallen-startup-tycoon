@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>📍 About St. Gallen Startup Tycoon</h1>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 2rem; margin: 2rem 0;">
+    <div style="background: #f8f9fa; padding: 2rem; border-radius: 15px;">
+        <h2>🎮 Game Overview</h2>
+        <p>St. Gallen Startup Tycoon is a business simulation game where you build and manage your own startup in the beautiful Eastern Swiss city of St. Gallen.</p>
+        
+        <h3>🎯 Objective</h3>
+        <p>Survive 12 months, build a successful company, and achieve the highest score on the leaderboard!</p>
+        
+        <h3>📊 Scoring</h3>
+        <ul>
+            <li><strong>Balance:</strong> 1 point per CHF</li>
+            <li><strong>Customers:</strong> 10 points each</li>
+            <li><strong>Reputation:</strong> 1000 points per point</li>
+            <li><strong>Product Quality:</strong> 1000 points per point</li>
+        </ul>
+    </div>
+</div>
+
+<div style="background: #fff3cd; border: 2px solid #ffeaa7; border-radius: 15px; padding: 2rem; margin: 2rem 0;">
+    <h2>🎲 Game Mechanics</h2>
+    
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 1rem;">
+        <div>
+            <h3>💼 Monthly Actions</h3>
+            <ul>
+                <li><strong>Marketing:</strong> Gain customers and reputation</li>
+                <li><strong>Development:</strong> Improve product quality</li>
+                <li><strong>Hiring:</strong> Add employees for productivity</li>
+                <li><strong>Research:</strong> Gain market insights and protection</li>
+                <li><strong>Expansion:</strong> Major growth across Eastern Switzerland</li>
+                <li><strong>Relaxation:</strong> Save money, potentially gain inspiration</li>
+            </ul>
+        </div>
+        
+        <div>
+            <h3>🎭 Random Events</h3>
+            <ul>
+                <li>Swiss economic conditions</li>
+                <li>Local St. Gallen happenings</li>
+                <li>Business opportunities and crises</li>
+                <li>Interactive mini-games (Quiz, Dragons' Den)</li>
+                <li>Humorous Swiss-themed scenarios</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div style="background: #d4edda; border: 2px solid #c3e6cb; border-radius: 15px; padding: 2rem; margin: 2rem 0;">
+    <h2>💡 Tips for Success</h2>
+    
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-top: 1rem;">
+        <div>
+            <h4>💰 Financial Management</h4>
+            <p>Watch your balance carefully. Going below -5,000 CHF means bankruptcy!</p>
+        </div>
+        
+        <div>
+            <h4>🎯 Balanced Growth</h4>
+            <p>Don't neglect any metric. Balance customers, quality, and reputation.</p>
+        </div>
+        
+        <div>
+            <h4>🔬 Research Investment</h4>
+            <p>Research protection helps reduce negative event impacts.</p>
+        </div>
+        
+        <div>
+            <h4>🎲 Risk vs. Reward</h4>
+            <p>Some events offer high-risk, high-reward choices. Choose wisely!</p>
+        </div>
+    </div>
+</div>
+
+<div style="background: #f8d7da; border: 2px solid #f5c6cb; border-radius: 15px; padding: 2rem; margin: 2rem 0;">
+    <h2>⚠️ Bankruptcy & Loans</h2>
+    <p>If your balance goes negative, you can take emergency loans to survive:</p>
+    <ul>
+        <li><strong>Emergency Loan:</strong> 5,000 CHF immediate cash</li>
+        <li><strong>Repayment:</strong> 2,000 CHF per month for 3 months</li>
+        <li><strong>High Interest:</strong> Pay back 6,000 CHF total</li>
+        <li><strong>Last Resort:</strong> Better than bankruptcy!</li>
+    </ul>
+    <p><em>If you can't repay loans and reach -5,000 CHF, it's game over!</em></p>
+</div>
+
+<div style="text-align: center; margin: 3rem 0;">
+    <h2>🚀 Ready to Build Your Empire?</h2>
+    <a href="/" class="btn" style="font-size: 18px; padding: 15px 30px;">Start Playing Now!</a>
+    <a href="/leaderboard" class="btn btn-success" style="font-size: 18px; padding: 15px 30px;">View Leaderboard</a>
+</div>
+
+<div style="text-align: center; margin-top: 2rem; padding: 1rem; background: #f8f9fa; border-radius: 10px;">
+    <p style="color: #666; margin: 0;">
+        🇨🇭 Built with Swiss precision in Krummenau, St. Gallen<br>
+        Experience the entrepreneurial spirit of Eastern Switzerland!
+    </p>
+</div>
+{% endblock %}

@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block content %}
+<div style="text-align: center;">
+    <h1>🎉 Spiel Beendet!</h1>
+    <h2>{{ company.owner_name }}'s Endergebnis</h2>
+    
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 30px 0;">
+        <div style="background: #e9ecef; padding: 20px; border-radius: 10px; text-align: center;">
+            <h3>🏆 Endpunktzahl</h3>
+            <p style="font-size: 2em; font-weight: bold; color: #007bff;">{{ "{:,}".format(final_score) }}</p>
+        </div>
+        <div style="background: #e9ecef; padding: 20px; border-radius: 10px; text-align: center;">
+            <h3>💰 Endkontostand</h3>
+            <p style="font-size: 1.5em;">{{ "{:,}".format(company.balance) }} CHF</p>
+        </div>
+        <div style="background: #e9ecef; padding: 20px; border-radius: 10px; text-align: center;">
+            <h3>👥 Kunden</h3>
+            <p style="font-size: 1.5em;">{{ company.customers }}</p>
+        </div>
+        <div style="background: #e9ecef; padding: 20px; border-radius: 10px; text-align: center;">
+            <h3>👨‍💼 Mitarbeiter</h3>
+            <p style="font-size: 1.5em;">{{ company.employees }}</p>
+        </div>
+        <div style="background: #e9ecef; padding: 20px; border-radius: 10px; text-align: center;">
+            <h3>⭐ Reputation</h3>
+            <p style="font-size: 1.5em;">{{ "%.1f"|format(company.reputation) }}</p>
+        </div>
+        <div style="background: #e9ecef; padding: 20px; border-radius: 10px; text-align: center;">
+            <h3>📈 Produktqualität</h3>
+            <p style="font-size: 1.5em;">{{ "%.1f"|format(company.product_quality) }}</p>
+        </div>
+    </div>
+    
+    {% if company.months_survived >= 12 and not company.is_bankrupt %}
+    <div style="background: #d4edda; padding: 20px; border-radius: 10px; margin: 20px 0; border: 2px solid #c3e6cb;">
+        <h3>🎊 Herzlichen Glückwunsch!</h3>
+        <p style="font-size: 1.2em;">Du hast alle 12 Monate in St. Gallen überlebt! Dein Erfolg wird ins Leaderboard eingetragen!</p>
+    </div>
+    {% elif company.is_bankrupt %}
+    <div style="background: #f8d7da; padding: 20px; border-radius: 10px; margin: 20px 0; border: 2px solid #f5c6cb;">
+        <h3>💀 Bankrott!</h3>
+        <p style="font-size: 1.2em;">Leider ist dein Startup bankrott gegangen. Nur erfolgreiche Unternehmer schaffen es ins Leaderboard!</p>
+    </div>
+    {% else %}
+    <div style="background: #fff3cd; padding: 20px; border-radius: 10px; margin: 20px 0; border: 2px solid #ffeaa7;">
+        <h3>⏰ Zu früh beendet!</h3>
+        <p style="font-size: 1.2em;">Du hast nicht alle 12 Monate geschafft. Nur wer das ganze Jahr überlebt, kommt ins Leaderboard!</p>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+// Automatische Weiterleitung nach 5 Sekunden
+setTimeout(() => {
+    window.location.href = '/leaderboard';
+}, 5000);
+</script>
+
+<div style="text-align: center; margin-top: 30px;">
+    <p style="font-size: 1.1em; margin-bottom: 20px;">Du wirst in <span id="countdown">5</span> Sekunden automatisch zum Leaderboard weitergeleitet...</p>
+    <a href="/leaderboard" class="btn" style="font-size: 18px; padding: 15px 30px;">Sofort zum Leaderboard</a>
+</div>
+
+<script>
+let countdown = 5;
+const countdownElement = document.getElementById('countdown');
+
+const timer = setInterval(() => {
+    countdown--;
+    countdownElement.textContent = countdown;
+    if (countdown <= 0) {
+        clearInterval(timer);
+    }
+}, 1000);
+</script>
+{% endblock %}

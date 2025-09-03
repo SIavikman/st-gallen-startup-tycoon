@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>🏆 St. Gallen Startup Hall of Fame</h1>
+
+<div style="text-align: center; margin-bottom: 2rem;">
+    <p style="font-size: 1.2em; color: #666;">The most successful entrepreneurs in Eastern Switzerland</p>
+    <a href="/" class="btn">🎮 Start New Game</a>
+</div>
+
+{% if leaderboard %}
+<div style="background: #f8f9fa; border-radius: 15px; padding: 2rem; margin: 2rem 0;">
+    <div style="display: grid; grid-template-columns: auto 1fr auto auto auto auto; gap: 15px; align-items: center; font-weight: bold; padding-bottom: 15px; border-bottom: 2px solid #dee2e6; margin-bottom: 20px;">
+        <div>Rank</div>
+        <div>Entrepreneur</div>
+        <div>Score</div>
+        <div>Balance</div>
+        <div>Customers</div>
+        <div>Status</div>
+    </div>
+    
+    {% for entry in leaderboard %}
+    <div style="display: grid; grid-template-columns: auto 1fr auto auto auto auto; gap: 15px; align-items: center; padding: 12px 0; border-bottom: 1px solid #eee; {% if entry.is_bankrupt %}color: #dc3545;{% elif entry.outstanding_debt > 0 %}color: #fd7e14;{% else %}color: #28a745;{% endif %}">
+        <div style="font-weight: bold;">
+            {% if loop.index == 1 %}👑
+            {% elif loop.index == 2 %}🥈
+            {% elif loop.index == 3 %}🥉
+            {% else %}{{ loop.index }}.
+            {% endif %}
+        </div>
+        <div style="font-weight: 500;">{{ entry.name }}</div>
+        <div style="font-weight: bold;">{{ "{:,}".format(entry.score) }}</div>
+        <div>{{ "{:,}".format(entry.balance) }} CHF</div>
+        <div>{{ "{:,}".format(entry.customers) }}</div>
+        <div>
+            {% if entry.is_bankrupt %}
+                💀 Bankrupt
+            {% elif entry.outstanding_debt > 0 %}
+                💳 In Debt
+            {% else %}
+                ✅ Thriving
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<div style="background: #e3f2fd; padding: 20px; border-radius: 10px; margin-top: 2rem;">
+    <h3>📊 Scoring System</h3>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 15px;">
+        <div style="background: white; padding: 15px; border-radius: 8px; text-align: center;">
+            <div style="font-weight: bold;">💰 Balance</div>
+            <div style="color: #666;">1:1 Points</div>
+        </div>
+        <div style="background: white; padding: 15px; border-radius: 8px; text-align: center;">
+            <div style="font-weight: bold;">👥 Customers</div>
+            <div style="color: #666;">10 Points Each</div>
+        </div>
+        <div style="background: white; padding: 15px; border-radius: 8px; text-align: center;">
+            <div style="font-weight: bold;">⭐ Reputation</div>
+            <div style="color: #666;">1000 Points per Point</div>
+        </div>
+        <div style="background: white; padding: 15px; border-radius: 8px; text-align: center;">
+            <div style="font-weight: bold;">📈 Quality</div>
+            <div style="color: #666;">1000 Points per Point</div>
+        </div>
+    </div>
+</div>
+
+{% else %}
+<div style="text-align: center; padding: 3rem; background: #f8f9fa; border-radius: 15px;">
+    <h2>🎭 No Entrepreneurs Yet!</h2>
+    <p style="font-size: 1.2em; color: #666;">Be the first to conquer St. Gallen!</p>
+    <a href="/" class="btn" style="font-size: 18px; padding: 15px 30px;">🚀 Start First Game</a>
+</div>
+{% endif %}
+
+<div style="text-align: center; margin-top: 3rem;">
+    <a href="/" class="btn">🏠 Back to Home</a>
+    <a href="/about" class="btn btn-success">ℹ️ About Game</a>
+</div>
+{% endblock %}

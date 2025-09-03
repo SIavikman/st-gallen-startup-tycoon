@@ -1,0 +1,196 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+nav { display: none !important; }
+.container { padding-top: 0; }
+</style>
+
+<h1>Monat {{ current_month }}/12 - {{ company.owner_name }}'s Startup</h1>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 20px 0;">
+    <div style="background: #e9ecef; padding: 15px; border-radius: 8px; text-align: center;">
+        <h3>💰 Balance</h3>
+        <p data-balance>{{ "{:,}".format(company.balance) }} CHF</p>
+    </div>
+    <div style="background: #e9ecef; padding: 15px; border-radius: 8px; text-align: center;">
+        <h3>👥 Customers</h3>
+        <p data-customers>{{ company.customers }}</p>
+    </div>
+    <div style="background: #e9ecef; padding: 15px; border-radius: 8px; text-align: center;">
+        <h3>👨‍💼 Employees</h3>
+        <p data-employees>{{ company.employees }}</p>
+    </div>
+    <div style="background: #e9ecef; padding: 15px; border-radius: 8px; text-align: center;">
+        <h3>⭐ Reputation</h3>
+        <p data-reputation>{{ "%.1f"|format(company.reputation) }}</p>
+    </div>
+    <div style="background: #e9ecef; padding: 15px; border-radius: 8px; text-align: center;">
+        <h3>📈 Product Quality</h3>
+        <p data-quality>{{ "%.1f"|format(company.product_quality) }}</p>
+    </div>
+    <div style="background: #e9ecef; padding: 15px; border-radius: 8px; text-align: center;">
+        <h3>📊 Score</h3>
+        <p data-score>{{ "{:,}".format(company.balance + (company.customers * 10) + (company.reputation * 1000) + (company.product_quality * 1000)) }}</p>
+    </div>
+</div>
+
+<h3>Verfügbare Aktionen:</h3>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; margin: 20px 0;">
+    <div class="action-card" onclick="executeAction('marketing')">
+        <div style="font-weight: bold;">HSG Campus Marketing</div>
+        <div>Kosten: 1,500 CHF</div>
+        <div style="font-size: 0.9em; color: #666;">Target wealthy HSG students</div>
+    </div>
+    
+    <div class="action-card" onclick="executeAction('development')">
+        <div style="font-weight: bold;">Swiss Quality Development</div>
+        <div>Kosten: 2,000 CHF</div>
+        <div style="font-size: 0.9em; color: #666;">Meet Swiss quality standards</div>
+    </div>
+    
+    <div class="action-card" onclick="executeAction('hiring')">
+        <div style="font-weight: bold;">Recruit Talent</div>
+        <div>Kosten: 3,000 CHF</div>
+        <div style="font-size: 0.9em; color: #666;">Hire HSG graduates</div>
+    </div>
+    
+    <div class="action-card" onclick="executeAction('research')">
+        <div style="font-weight: bold;">Market Research</div>
+        <div>Kosten: 1,000 CHF</div>
+        <div style="font-size: 0.9em; color: #666;">Study St. Gallen market trends</div>
+    </div>
+    
+    <div class="action-card" onclick="executeAction('expansion')">
+        <div style="font-weight: bold;">Regional Expansion</div>
+        <div>Kosten: 4,000 CHF</div>
+        <div style="font-size: 0.9em; color: #666;">Expand across Eastern Switzerland</div>
+    </div>
+    
+    <div class="action-card" onclick="executeAction('nothing')">
+        <div style="font-weight: bold;">Chill at Drei Weihern</div>
+        <div>Kosten: Free</div>
+        <div style="font-size: 0.9em; color: #666;">Relax by the lakes</div>
+    </div>
+</div>
+
+<style>
+.action-card {
+    background: #f8f9fa;
+    border: 2px solid #dee2e6;
+    border-radius: 10px;
+    padding: 15px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+.action-card:hover {
+    border-color: #007bff;
+    transform: translateY(-2px);
+}
+.action-card:disabled,
+.action-card.disabled {
+    opacity: 0.6;
+    pointer-events: none;
+    cursor: not-allowed;
+}
+</style>
+
+<script>
+function showMessage(message, isSuccess = true, callback = null) {
+    const messageDiv = document.createElement('div');
+    messageDiv.style.cssText = `
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        padding: 20px 30px;
+        border-radius: 10px;
+        color: white;
+        font-weight: bold;
+        z-index: 2000;
+        max-width: 600px;
+        word-wrap: break-word;
+        background: ${isSuccess ? '#28a745' : '#dc3545'};
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        text-align: left;
+        cursor: pointer;
+    `;
+    messageDiv.innerHTML = message.replace(/\n/g, '<br>') + '<br><br><div style="text-align: center;"><strong>Klicken zum Weiter</strong></div>';
+    
+    const overlay = document.createElement('div');
+    overlay.style.cssText = `
+        position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(0,0,0,0.7); z-index: 1999;
+    `;
+    
+    document.body.appendChild(overlay);
+    document.body.appendChild(messageDiv);
+    
+    const removeMessage = () => {
+        if (overlay.parentNode) overlay.remove();
+        if (messageDiv.parentNode) messageDiv.remove();
+        if (callback) callback();
+    };
+    
+    messageDiv.onclick = removeMessage;
+    overlay.onclick = removeMessage;
+}
+
+function executeAction(actionType) {
+    // Disable all action cards
+    const buttons = document.querySelectorAll('.action-card');
+    buttons.forEach(btn => {
+        btn.classList.add('disabled');
+        btn.style.pointerEvents = 'none';
+        btn.style.opacity = '0.6';
+    });
+    
+    fetch('/api/complete_turn', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: actionType })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Ein einziges Pop-up mit allen Infos
+            const monthSummary = `
+                <strong>📊 Monat ${data.new_month - 1} Zusammenfassung</strong><br><br>
+                <strong>Deine Aktion:</strong><br>
+                ${data.action_result}<br><br>
+                <strong>Was ist passiert:</strong><br>
+                ${data.event_result}<br><br>
+                <strong>Finanzen:</strong><br>
+                ${data.finance_result}
+            `;
+            
+            showMessage(monthSummary, true, () => {
+                if (data.game_over) {
+                    window.location.href = '/game_over';
+                } else {
+                    location.reload();
+                }
+            });
+        } else {
+            showMessage('Fehler: ' + data.error, false, () => {
+                buttons.forEach(btn => {
+                    btn.classList.remove('disabled');
+                    btn.style.pointerEvents = 'auto';
+                    btn.style.opacity = '1';
+                });
+            });
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showMessage('Netzwerkfehler: ' + error.message, false, () => {
+            buttons.forEach(btn => {
+                btn.classList.remove('disabled');
+                btn.style.pointerEvents = 'auto';
+                btn.style.opacity = '1';
+            });
+        });
+    });
+}
+</script>
+{% endblock %}
