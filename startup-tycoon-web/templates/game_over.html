@@ -1,6 +1,10 @@
 {% extends "base.html" %}
 {% block content %}
 
+<!-- Include animations CSS and JS -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/animations.css') }}">
+<script src="{{ url_for('static', filename='js/animations.js') }}"></script>
+
 <!-- Versteckter Hauptcontent (wird nach Animation gezeigt) -->
 <div id="main-content" style="display: none;">
     <div style="text-align: center;">
@@ -58,20 +62,72 @@
     </div>
 </div>
 
-<!-- Game Over Animation wird hier eingefügt -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Warte kurz bis alles geladen ist
     setTimeout(() => {
-        // Zeige Game Over Animation
-        showGameOverAnimation();
+        // Zeige passende Animation basierend auf Spielergebnis
+        showGameEndAnimation();
     }, 200);
 });
 
-function showGameOverAnimation() {
-    // Erstelle Game Over Overlay
+function showGameEndAnimation() {
+    // Hole die Spieldaten aus dem Template
+    const playerName = '{{ company.owner_name }}';
+    const finalScore = {{ final_score }};
+    const monthsSurvived = {{ company.months_survived }};
+    const isBankrupt = {{ 'true' if company.is_bankrupt else 'false' }};
+    
+    // Prüfe ob gameAnimations verfügbar ist
+    if (typeof gameAnimations !== 'undefined') {
+        // Verwende die neue Animationsklasse
+        gameAnimations.showGameOver(playerName, finalScore, monthsSurvived, isBankrupt);
+        
+        // Override die Buttons um lokale Funktionen zu verwenden
+        setTimeout(() => {
+            // Ersetze die onclick-Handler der Buttons
+            const primaryBtns = document.querySelectorAll('.go-btn.primary, .go-btn.success');
+            const secondaryBtns = document.querySelectorAll('.go-btn:not(.primary):not(.success)');
+            
+            primaryBtns.forEach(btn => {
+                btn.onclick = showResults;
+            });
+            
+            secondaryBtns.forEach(btn => {
+                btn.onclick = goToLeaderboard;
+            });
+        }, 500);
+    } else {
+        // Fallback zur alten Animation falls animations.js nicht geladen
+        showFallbackAnimation();
+    }
+}
+
+function showFallbackAnimation() {
     const overlay = document.createElement('div');
     overlay.className = 'go-overlay is-open';
+    
+    {% if company.months_survived >= 12 and not company.is_bankrupt %}
+    // Success Version
+    overlay.innerHTML = `
+        <div class="success-card">
+            <h1 class="success-title">
+                GRATULIERE!
+                <span class="sparkle">GRATULIERE!</span>
+            </h1>
+            <p class="success-sub">{{ company.owner_name }}, du hast alle 12 Monate in St. Gallen überlebt!</p>
+            <div class="success-pill" style="display: flex;">
+                <span class="success-dot"></span>
+                <span>Endpunktzahl: <strong>{{ "{:,}".format(final_score) }}</strong></span>
+            </div>
+            <div class="success-actions">
+                <button class="go-btn success" onclick="showResults()">Ergebnisse anzeigen</button>
+                <button class="go-btn" onclick="goToLeaderboard()">Zum Leaderboard</button>
+            </div>
+        </div>
+    `;
+    {% else %}
+    // Game Over Version
     overlay.innerHTML = `
         <div class="go-card">
             <h1 class="go-title">
@@ -79,18 +135,17 @@ function showGameOverAnimation() {
                 <span class="glitch">GAME OVER</span>
             </h1>
             <p class="go-sub">{{ company.owner_name }}'s St. Gallen Adventure ist zu Ende!</p>
-            
             <div class="go-pill" style="display: flex;">
                 <span class="go-dot"></span>
                 <span>Endpunktzahl: <strong>{{ "{:,}".format(final_score) }}</strong></span>
             </div>
-            
             <div class="go-actions">
                 <button class="go-btn primary" onclick="showResults()">Ergebnisse anzeigen</button>
                 <button class="go-btn" onclick="goToLeaderboard()">Zum Leaderboard</button>
             </div>
         </div>
     `;
+    {% endif %}
     
     document.body.appendChild(overlay);
     document.documentElement.style.overflow = 'hidden';
@@ -98,11 +153,18 @@ function showGameOverAnimation() {
 
 function showResults() {
     // Verstecke Animation
-    const overlay = document.querySelector('.go-overlay');
-    if (overlay) {
-        overlay.classList.remove('is-open');
-        setTimeout(() => overlay.remove(), 300);
+    const gameOverlay = document.querySelector('.go-overlay');
+    const successOverlay = document.querySelector('.success-overlay');
+    
+    if (gameOverlay) {
+        gameOverlay.classList.remove('is-open');
+        setTimeout(() => gameOverlay.remove(), 300);
     }
+    if (successOverlay) {
+        successOverlay.classList.remove('is-open');
+        setTimeout(() => successOverlay.remove(), 300);
+    }
+    
     document.documentElement.style.overflow = '';
     
     // Zeige Hauptcontent
@@ -137,13 +199,23 @@ function startCountdown() {
     }, 8000);
 }
 
-// Automatisch Animation nach 4 Sekunden ausblenden (falls Nutzer nicht klickt)
+// Automatisch Animation nach bestimmter Zeit ausblenden (falls Nutzer nicht klickt)
 setTimeout(() => {
+    {% if company.months_survived >= 12 and not company.is_bankrupt %}
+    // Success: 6 Sekunden warten
+    const overlay = document.querySelector('.success-overlay');
+    if (overlay && overlay.classList.contains('is-open')) {
+        showResults();
+    }
+    }, 6000);
+    {% else %}
+    // Game Over: 4 Sekunden warten
     const overlay = document.querySelector('.go-overlay');
     if (overlay && overlay.classList.contains('is-open')) {
         showResults();
     }
-}, 4000);
+    }, 4000);
+    {% endif %}
 </script>
 
 {% endblock %}
