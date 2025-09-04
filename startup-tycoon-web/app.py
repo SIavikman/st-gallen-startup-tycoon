@@ -276,13 +276,53 @@ def game_over():
     save_score(company_dict, int(final_score))
     leaderboard = get_leaderboard()
     
+    # Initialize event manager for humorous messages
+    event_manager = SwissEventManager()
+    
+    # Calculate player's rank for contextual humor
+    # Find where this player would rank in the leaderboard
+    player_rank = 1
+    total_players = len(leaderboard) + 1  # +1 for current player
+    
+    for i, entry in enumerate(leaderboard):
+        if final_score > entry['score']:
+            player_rank = i + 1
+            break
+        else:
+            player_rank = i + 2  # Player ranks after this entry
+    
+    # If leaderboard is empty or player has lowest score
+    if not leaderboard:
+        player_rank = 1
+        total_players = 1
+    elif final_score <= (leaderboard[-1]['score'] if leaderboard else 0):
+        player_rank = len(leaderboard) + 1
+    
+    # Convert dict back to Company object temporarily for the message functions
+    temp_company = dict_to_company(company_dict)
+    
+    # Get humorous messages
+    humorous_message = event_manager.get_humorous_endgame_message(
+        temp_company, player_rank, total_players
+    )
+    
+    bankruptcy_message = None
+    if company_dict.get('is_bankrupt', False):
+        bankruptcy_message = event_manager.get_bankruptcy_message()
+    
+    achievements = event_manager.get_special_achievement_messages(temp_company)
+    
+    # Clean up session
     session.pop('company', None)
     session.pop('current_month', None)
     
     return render_template('game_over.html', 
                          company=company_dict,
                          final_score=int(final_score),
-                         leaderboard=leaderboard)
+                         leaderboard=leaderboard,
+                         humorous_message=humorous_message,
+                         bankruptcy_message=bankruptcy_message,
+                         achievements=achievements)
 
 @app.errorhandler(404)
 def not_found_error(error):
@@ -301,3 +341,4 @@ init_db()
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     app.run(debug=False, host='0.0.0.0', port=port)
+
