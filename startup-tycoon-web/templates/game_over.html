@@ -11,6 +11,14 @@
         <h1>🎉 Spiel Beendet!</h1>
         <h2>{{ company.owner_name }}'s Endergebnis</h2>
         
+        <!-- Humorous End Message Section -->
+        {% if humorous_message %}
+        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 25px; border-radius: 15px; margin: 25px 0; box-shadow: 0 8px 25px rgba(0,0,0,0.15);">
+            <h3 style="margin-top: 0; font-size: 1.4em; margin-bottom: 15px;">📢 St. Galler Urteil</h3>
+            <p style="font-size: 1.3em; margin: 0; font-weight: 500; line-height: 1.4;">{{ humorous_message|safe }}</p>
+        </div>
+        {% endif %}
+        
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 30px 0;">
             <div style="background: #e9ecef; padding: 20px; border-radius: 10px; text-align: center;">
                 <h3>🏆 Endpunktzahl</h3>
@@ -38,6 +46,20 @@
             </div>
         </div>
         
+        <!-- Special Achievements Section -->
+        {% if achievements %}
+        <div style="background: #fff3cd; border: 2px solid #ffeaa7; padding: 20px; border-radius: 10px; margin: 20px 0;">
+            <h3 style="margin-top: 0; color: #856404;">🏅 Besondere Erfolge</h3>
+            <div style="display: grid; gap: 10px;">
+                {% for achievement in achievements %}
+                <div style="background: white; padding: 12px; border-radius: 8px; text-align: left; border-left: 4px solid #ffc107;">
+                    <span style="font-size: 1.1em;">{{ achievement|safe }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+        
         {% if company.months_survived >= 12 and not company.is_bankrupt %}
         <div style="background: #d4edda; padding: 20px; border-radius: 10px; margin: 20px 0; border: 2px solid #c3e6cb;">
             <h3>🎊 Herzlichen Glückwunsch!</h3>
@@ -47,6 +69,11 @@
         <div style="background: #f8d7da; padding: 20px; border-radius: 10px; margin: 20px 0; border: 2px solid #f5c6cb;">
             <h3>💀 Bankrott!</h3>
             <p style="font-size: 1.2em;">Leider ist dein Startup bankrott gegangen. Nur erfolgreiche Unternehmer schaffen es ins Leaderboard!</p>
+            {% if bankruptcy_message %}
+            <div style="margin-top: 15px; padding: 15px; background: rgba(220, 53, 69, 0.1); border-radius: 8px; border-left: 4px solid #dc3545;">
+                <p style="margin: 0; font-style: italic; font-size: 1.1em;">{{ bankruptcy_message|safe }}</p>
+            </div>
+            {% endif %}
         </div>
         {% else %}
         <div style="background: #fff3cd; padding: 20px; border-radius: 10px; margin: 20px 0; border: 2px solid #ffeaa7;">
@@ -77,11 +104,12 @@ function showGameEndAnimation() {
     const finalScore = {{ final_score }};
     const monthsSurvived = {{ company.months_survived }};
     const isBankrupt = {{ 'true' if company.is_bankrupt else 'false' }};
+    const humorousMessage = `{{ humorous_message|safe if humorous_message else '' }}`;
     
     // Prüfe ob gameAnimations verfügbar ist
     if (typeof gameAnimations !== 'undefined') {
         // Verwende die neue Animationsklasse
-        gameAnimations.showGameOver(playerName, finalScore, monthsSurvived, isBankrupt);
+        gameAnimations.showGameOver(playerName, finalScore, monthsSurvived, isBankrupt, humorousMessage);
         
         // Override die Buttons um lokale Funktionen zu verwenden
         setTimeout(() => {
@@ -107,6 +135,13 @@ function showFallbackAnimation() {
     const overlay = document.createElement('div');
     overlay.className = 'go-overlay is-open';
     
+    const humorousMessage = `{{ humorous_message|safe if humorous_message else '' }}`;
+    const humorSection = humorousMessage ? `
+        <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 10px; margin: 15px 0; border-left: 4px solid #fff;">
+            <p style="margin: 0; font-size: 1.1em; font-style: italic;">${humorousMessage}</p>
+        </div>
+    ` : '';
+    
     {% if company.months_survived >= 12 and not company.is_bankrupt %}
     // Success Version
     overlay.innerHTML = `
@@ -116,6 +151,7 @@ function showFallbackAnimation() {
                 <span class="sparkle">GRATULIERE!</span>
             </h1>
             <p class="success-sub">{{ company.owner_name }}, du hast alle 12 Monate in St. Gallen überlebt!</p>
+            ${humorSection}
             <div class="success-pill" style="display: flex;">
                 <span class="success-dot"></span>
                 <span>Endpunktzahl: <strong>{{ "{:,}".format(final_score) }}</strong></span>
@@ -135,6 +171,7 @@ function showFallbackAnimation() {
                 <span class="glitch">GAME OVER</span>
             </h1>
             <p class="go-sub">{{ company.owner_name }}'s St. Gallen Adventure ist zu Ende!</p>
+            ${humorSection}
             <div class="go-pill" style="display: flex;">
                 <span class="go-dot"></span>
                 <span>Endpunktzahl: <strong>{{ "{:,}".format(final_score) }}</strong></span>
