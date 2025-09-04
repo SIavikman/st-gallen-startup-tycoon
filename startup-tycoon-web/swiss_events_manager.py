@@ -72,6 +72,91 @@ class SwissEventManager:
         
         return "📊 Perfect day in beautiful St. Gallen! Everything runs smoothly!"
 
+    # ===== HUMOROUS MESSAGES =====
+
+    def get_humorous_endgame_message(self, company, rank, total_players):
+        """Returns humorous end messages based on performance"""
+        score = company.calculate_score()
+        balance = company.balance
+        
+        # Victory messages (1st place)
+        if rank == 1:
+            if balance > 50000:
+                return "🏆 Congratulations! You're richer than the Migros cashier on payday!"
+            elif balance > 30000:
+                return "👑 Your coffers are so full, you could almost afford a studio in Zurich!"
+            elif balance > 20000:
+                return "💰 Your treasure chest is fuller than the HSG library during finals!"
+            else:
+                return "🎉 Congrats! You have more customers than FC St. Gallen has fans in Kybunpark!"
+        
+        # Middle places
+        elif rank <= total_players // 2:
+            middle_messages = [
+                "📈 Solid performance! You were more successful than SBB's punctuality.",
+                "👏 Not bad! You achieved more than a tourist trying to pronounce Chuchichäschtli.",
+                "⚖️ Balanced like a Swiss bank account - neither poor nor rich, but stable!",
+                "🎯 Midfield like Switzerland at Eurovision - always participating, rarely at the top.",
+                "🍫 Decent like Swiss chocolate - not the best, but still pretty sweet!"
+            ]
+            return random.choice(middle_messages)
+        
+        # Poor performance
+        else:
+            if balance < -2000:
+                return "💸 Game Over: You went bankrupt faster than a Basel resident finding affordable housing in Zurich."
+            elif balance < 5000:
+                return "📉 Game Over: Your cash fell deeper than the fog line in November."
+            elif company.reputation < 0.5:
+                return "😬 Your reputation is so bad, even spam emails are more popular."
+            else:
+                return "🌭 Unfortunately failed, but hey - at least there's fresh bratwurst at Olma!"
+        
+        # Fallback
+        return "🎮 Game Over! Time for a new round of St. Gallen Startup Tycoon!"
+
+    def get_bankruptcy_message(self):
+        """Special messages for bankruptcy"""
+        bankruptcy_messages = [
+            "💀 Bankrupt! You're broke like a Swiss person without health insurance.",
+            "🚨 Bankruptcy! Even your emergency fund has quit.",
+            "📉 Broke! You have less money than a student after the first week of semester.",
+            "💸 Bankrupt! Your account balance is more negative than February weather in St. Gallen.",
+            "🍴 Game Over! Time to move back in with mom and eat Cervelat.",
+            "💔 Bankrupt! Your startup dream crashed harder than the Swiss national football team's World Cup hopes."
+        ]
+        return random.choice(bankruptcy_messages)
+
+    def get_special_achievement_messages(self, company):
+        """Special achievement messages for exceptional performance"""
+        achievements = []
+        
+        if company.customers > 500:
+            achievements.append("🌟 'Customer Magnet': More fans than an alphorn concert!")
+        
+        if company.reputation > 3.0:
+            achievements.append("⭐ 'Reputation King': More popular than Rösti on Sunday!")
+        
+        if company.product_quality > 3.0:
+            achievements.append("🔧  'Quality Guru': More precise than a Swiss watch!")
+        
+        if company.employees > 10:
+            achievements.append("👥 'Team Builder': More employees than some mountain huts have beds!")
+        
+        if company.balance > 100000:
+            achievements.append("💎 'Money Magnate': Richer than a Zurich banker!")
+        
+        if hasattr(company, 'months_survived') and company.months_survived == 12 and company.balance > 0:
+            achievements.append("🏔️ 'Survival Artist': Survived 12 months like a real Swiss winter!")
+        
+        if company.customers > 200 and company.reputation > 2.0:
+            achievements.append("🎓 'HSG Favorite': Even the snobby business students approve!")
+        
+        if company.balance > 50000 and company.employees > 5:
+            achievements.append("🏢 'St. Gallen Success Story': From Drei Weihern dreamer to business mogul!")
+        
+        return achievements
+
     # Economic Events
     def economic_boom_event(self, company):
         company.marketing_boost = 2
@@ -206,28 +291,6 @@ class SwissEventManager:
             protection_text = ""
         company.balance -= fine
         company.reputation -= random.uniform(0.1, 0.2)
-        violations = ["Data protection violation", "Anti-competitive behavior", "Tax irregularity"]
-        violation = random.choice(violations)
-        return f"⚖️ Legal penalty: {violation}! -{fine:,} CHF fine{protection_text}"
-
-    def employee_quits_event(self, company):
-        if company.employees <= 1:
-            return "👋 An employee wanted to quit, but you're alone in the team anyway!"
-        company.employees -= 1
-        quality_loss = random.uniform(0.1, 0.2)
-        customer_loss = random.randint(5, 12)
-        company.product_quality = max(0.1, company.product_quality - quality_loss)
-        company.customers = max(0, company.customers - customer_loss)
-        quit_reasons = ["better offer", "burnout", "moving to Zurich", "starting own startup"]
-        reason = random.choice(quit_reasons)
-        return f"👋 Key employee quits due to '{reason}'. -1 Employee, quality suffers, {customer_loss} customers unhappy"
-
-    def big_customer_leaves_event(self, company):
-        customer_loss = random.randint(25, 35)
-        revenue_loss = random.randint(800, 1200)
-        company.customers = max(0, company.customers - customer_loss)
-        company.balance -= revenue_loss
-        company.reputation -= random.uniform(0.1, 0.2)
         return f"😤 Big customer switches to competition! -{customer_loss} customers, -{revenue_loss:,} CHF lost"
 
     def social_media_shitstorm_event(self, company):
@@ -309,4 +372,26 @@ class SwissEventManager:
         reputation_gain = random.uniform(0.15, 0.25)
         company.product_quality = max(0.1, company.product_quality - quality_loss)
         company.reputation += reputation_gain
-        return f"🤪 Intern rewrites code in Comic Sans! Quality suffers but everyone laughs about it (+Reputation)"
+        return f"🤪 Intern rewrites code in Comic Sans! Quality suffers but everyone laughs about it (+Reputation)" random.uniform(0.1, 0.2)
+        violations = ["Data protection violation", "Anti-competitive behavior", "Tax irregularity"]
+        violation = random.choice(violations)
+        return f"⚖️ Legal penalty: {violation}! -{fine:,} CHF fine{protection_text}"
+
+    def employee_quits_event(self, company):
+        if company.employees <= 1:
+            return "👋 An employee wanted to quit, but you're alone in the team anyway!"
+        company.employees -= 1
+        quality_loss = random.uniform(0.1, 0.2)
+        customer_loss = random.randint(5, 12)
+        company.product_quality = max(0.1, company.product_quality - quality_loss)
+        company.customers = max(0, company.customers - customer_loss)
+        quit_reasons = ["better offer", "burnout", "moving to Zurich", "starting own startup"]
+        reason = random.choice(quit_reasons)
+        return f"👋 Key employee quits due to '{reason}'. -1 Employee, quality suffers, {customer_loss} customers unhappy"
+
+    def big_customer_leaves_event(self, company):
+        customer_loss = random.randint(25, 35)
+        revenue_loss = random.randint(800, 1200)
+        company.customers = max(0, company.customers - customer_loss)
+        company.balance -= revenue_loss
+        company.reputation -=
