@@ -31,8 +31,7 @@ nav { display: none !important; }
     </div>
     <div style="background: #e9ecef; padding: 15px; border-radius: 8px; text-align: center;">
         <h3>📊 Score</h3>
-        <p data-score>{{ "{:,.0f}".format(company.balance + company.customers*10 + company.reputation*1000 + company.product_quality*1000) }}</p>
-
+        <p data-score>{{ "{:,}".format(round(company.balance + (company.customers * 10) + (company.reputation * 1000) + (company.product_quality * 1000))) }}</p>
     </div>
 </div>
 
