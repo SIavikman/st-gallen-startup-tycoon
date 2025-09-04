@@ -212,24 +212,36 @@ function executeAction(actionType) {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            // Ein einziges Pop-up mit allen Infos
-            const monthSummary = `
-                <strong>📊 Monat ${data.new_month - 1} Zusammenfassung</strong><br><br>
-                <strong>Deine Aktion:</strong><br>
-                ${data.action_result}<br><br>
-                <strong>Was ist passiert:</strong><br>
-                ${data.event_result}<br><br>
-                <strong>Finanzen:</strong><br>
-                ${data.finance_result}
-            `;
-            
-            showMessage(monthSummary, true, () => {
-                if (data.game_over) {
-                    window.location.href = '/game_over';
-                } else {
-                    location.reload();
-                }
-            });
+            // Spezialbehandlung für Emergency Loan
+            if (data.loan_taken) {
+                showMessage(
+                    '<strong>🏛️ Notkredit aufgenommen!</strong><br><br>' + data.message + 
+                    '<br><br>Du kannst jetzt eine normale Aktion für diesen Monat wählen!',
+                    true, 
+                    () => {
+                        location.reload(); // Seite neu laden um normale Aktionen zu zeigen
+                    }
+                );
+            } else {
+                // Normale Monatszusammenfassung
+                const monthSummary = `
+                    <strong>📊 Monat ${data.new_month - 1} Zusammenfassung</strong><br><br>
+                    <strong>Deine Aktion:</strong><br>
+                    ${data.action_result}<br><br>
+                    <strong>Was ist passiert:</strong><br>
+                    ${data.event_result}<br><br>
+                    <strong>Finanzen:</strong><br>
+                    ${data.finance_result}
+                `;
+                
+                showMessage(monthSummary, true, () => {
+                    if (data.game_over) {
+                        window.location.href = '/game_over';
+                    } else {
+                        location.reload();
+                    }
+                });
+            }
         } else {
             showMessage('Fehler: ' + data.error, false, () => {
                 buttons.forEach(btn => {
@@ -252,4 +264,3 @@ function executeAction(actionType) {
 </script>
 
 {% endblock %}
-
