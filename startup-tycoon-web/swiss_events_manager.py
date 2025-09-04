@@ -82,11 +82,11 @@ class SwissEventManager:
         # Victory messages (1st place)
         if rank == 1:
             if balance > 50000:
-                return "🏆 Congratulations! You're richer than the Migros cashier on payday!"
+                return "💰 Your treasure chest is fuller than the HSG library during finals!"
             elif balance > 30000:
                 return "👑 Your coffers are so full, you could almost afford a studio in Zurich!"
             elif balance > 20000:
-                return "💰 Your treasure chest is fuller than the HSG library during finals!"
+                return "👑 Your coffers are so full, you could almost afford a apartment on the Rosenberg!"
             else:
                 return "🎉 Congrats! You have more customers than FC St. Gallen has fans in Kybunpark!"
         
@@ -106,7 +106,7 @@ class SwissEventManager:
             if balance < -2000:
                 return "💸 Game Over: You went bankrupt faster than a Basel resident finding affordable housing in Zurich."
             elif balance < 5000:
-                return "📉 Game Over: Your cash fell deeper than the fog line in November."
+                return "📉 Game Over: Your cash fell deeper than the fog line in November in St. Gallen."
             elif company.reputation < 0.5:
                 return "😬 Your reputation is so bad, even spam emails are more popular."
             else:
@@ -122,7 +122,7 @@ class SwissEventManager:
             "🚨 Bankruptcy! Even your emergency fund has quit.",
             "📉 Broke! You have less money than a student after the first week of semester.",
             "💸 Bankrupt! Your account balance is more negative than February weather in St. Gallen.",
-            "🍴 Game Over! Time to move back in with mom and eat Cervelat.",
+            "🍴 Game Over! Time to move back in with mom and eat <nudle mit pesto>.",
             "💔 Bankrupt! Your startup dream crashed harder than the Swiss national football team's World Cup hopes."
         ]
         return random.choice(bankruptcy_messages)
@@ -132,10 +132,10 @@ class SwissEventManager:
         achievements = []
         
         if company.customers > 500:
-            achievements.append("🌟 'Customer Magnet': More fans than an alphorn concert!")
+            achievements.append("🌟 'Customer Magnet': More <fans> than Trischli on wednesday!")
         
         if company.reputation > 3.0:
-            achievements.append("⭐ 'Reputation King': More popular than Rösti on Sunday!")
+            achievements.append("⭐ 'Reputation King': More popular than drei Weiern on sunny Sunday!")
         
         if company.product_quality > 3.0:
             achievements.append("🔧  'Quality Guru': More precise than a Swiss watch!")
@@ -147,12 +147,12 @@ class SwissEventManager:
             achievements.append("💎 'Money Magnate': Richer than a Zurich banker!")
         
         if hasattr(company, 'months_survived') and company.months_survived == 12 and company.balance > 0:
-            achievements.append("🏔️ 'Survival Artist': Survived 12 months like a real Swiss winter!")
+            achievements.append("🏔️ 'Survival Artist': Survived 12 months like a real HSG Student!")
         
         if company.customers > 200 and company.reputation > 2.0:
             achievements.append("🎓 'HSG Favorite': Even the snobby business students approve!")
         
-        if company.balance > 50000 and company.employees > 5:
+        if company.balance > 100000 and company.employees > 10:
             achievements.append("🏢 'St. Gallen Success Story': From Drei Weihern dreamer to business mogul!")
         
         return achievements
