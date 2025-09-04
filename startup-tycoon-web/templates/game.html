@@ -265,20 +265,30 @@ function executeAction(actionType) {
         body: JSON.stringify({ action: actionType })
     })
     .then(response => response.json())
-    .then(data => {
+   .then(data => {
         if (data.success) {
-            // Spezialbehandlung für Emergency Loan
-            if (data.loan_taken) {
-                showMessage(
-                    '<strong>🏛️ Notkredit aufgenommen!</strong><br><br>' + data.message + 
-                    '<br><br>Du kannst jetzt eine normale Aktion für diesen Monat wählen!',
-                    true, 
-                    () => {
-                        location.reload(); // Seite neu laden um normale Aktionen zu zeigen
-                    }
-                );
+            // Check for interactive event
+            if (data.interactive_event) {
+                showInteractiveEvent(data.interactive_event, (choice) => {
+                    // Handle user choice
+                    fetch('/api/handle_special_events', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ choice: choice })
+                    })
+                    .then(response => response.json())
+                    .then(eventResult => {
+                        if (eventResult.success) {
+                            showMessage(eventResult.message, true, () => {
+                                location.reload();
+                            });
+                        } else {
+                            showMessage('Error: ' + eventResult.error, false);
+                        }
+                    });
+                });
             } else {
-                // Normale Monatszusammenfassung
+                // Normal event - show summary as before
                 const monthSummary = `
                     <strong>📊 Monat ${data.new_month - 1} Zusammenfassung</strong><br><br>
                     <strong>Deine Aktion:</strong><br>
@@ -300,6 +310,7 @@ function executeAction(actionType) {
         } else {
             showMessage('Fehler: ' + data.error, false, () => {
                 buttons.forEach(btn => {
+                    btn.classList.remove('disabled');
                     btn.style.pointerEvents = 'auto';
                     btn.style.opacity = '1';
                 });
@@ -319,5 +330,6 @@ function executeAction(actionType) {
 </script>
 
 {% endblock %}
+
 
 
