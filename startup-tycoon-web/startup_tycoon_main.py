@@ -9,8 +9,6 @@ from typing import Dict
 from dataclasses import dataclass
 from enum import Enum
 
-from swiss_events_manager import SwissEventManager
-
 
 class ActionType(Enum):
     MARKETING = "marketing"
