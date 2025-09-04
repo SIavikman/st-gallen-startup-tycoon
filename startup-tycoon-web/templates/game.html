@@ -195,6 +195,62 @@ function showMessage(message, isSuccess = true, callback = null) {
     overlay.onclick = removeMessage;
 }
 
+function showInteractiveEvent(eventData, callback) {
+    const overlay = document.createElement('div');
+    overlay.style.cssText = `
+        position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(0,0,0,0.8); z-index: 1999; display: flex;
+        align-items: center; justify-content: center;
+    `;
+    
+    const modal = document.createElement('div');
+    modal.style.cssText = `
+        background: white; padding: 30px; border-radius: 15px;
+        max-width: 500px; width: 90%; text-align: center;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    `;
+    
+    let optionsHTML = '';
+    eventData.options.forEach(option => {
+        optionsHTML += `
+            <button class="event-option-btn" data-choice="${option.id}" 
+                    style="display: block; width: 100%; margin: 10px 0; padding: 15px; 
+                           border: 2px solid #007bff; background: #f8f9fa; border-radius: 8px;
+                           cursor: pointer; font-size: 16px;">
+                ${option.text}
+            </button>
+        `;
+    });
+    
+    modal.innerHTML = `
+        <h2 style="color: #007bff; margin-bottom: 20px;">${eventData.title}</h2>
+        <p style="margin-bottom: 25px; line-height: 1.5;">${eventData.description}</p>
+        ${optionsHTML}
+    `;
+    
+    overlay.appendChild(modal);
+    document.body.appendChild(overlay);
+    
+    // Handle option clicks
+    modal.querySelectorAll('.event-option-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const choice = btn.getAttribute('data-choice');
+            overlay.remove();
+            callback(choice);
+        });
+        
+        btn.addEventListener('mouseenter', () => {
+            btn.style.background = '#007bff';
+            btn.style.color = 'white';
+        });
+        
+        btn.addEventListener('mouseleave', () => {
+            btn.style.background = '#f8f9fa';
+            btn.style.color = 'black';
+        });
+    });
+}
+    
 function executeAction(actionType) {
     // Disable all action cards
     const buttons = document.querySelectorAll('.action-card');
@@ -263,4 +319,5 @@ function executeAction(actionType) {
 </script>
 
 {% endblock %}
+
 
