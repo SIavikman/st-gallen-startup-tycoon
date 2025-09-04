@@ -445,104 +445,63 @@ class SwissEventManager:
     # ===== MINI-GAME EVENTS =====
 
     def trade_fair_gamble_event(self, company):
-        """Trade fair pitch gamble"""
-        cost = 1000
-        
-        print(f"\n🎪 TRADE FAIR PITCH OPPORTUNITY:")
-        print(f"   💸 Cost: {cost:,} CHF")
-        print(f"   🎲 50% Chance: +100 customers")
-        print(f"   🎲 50% Chance: Flop, money gone")
-        print(f"   💰 Your Budget: {company.balance:,} CHF")
-        
-        if company.balance < cost:
-            return f"💸 Trade fair pitch offered, but budget insufficient! Need {cost:,} CHF."
-        
-        while True:
-            choice = input("Pitch at the trade fair? (y/n): ").strip().lower()
-            if choice in ['y', 'yes']:
-                company.balance -= cost
-                if random.random() < 0.5:  # 50% success
-                    customer_gain = random.randint(90, 110)
-                    company.customers += customer_gain
-                    return (f"🎉 Trade fair pitch successful! -{cost:,} CHF invested, "
-                           f"+{customer_gain} enthusiastic customers won!")
-                else:
-                    return (f"😞 Trade fair pitch flopped! -{cost:,} CHF lost. "
-                           f"Audience wasn't the target group...")
-            elif choice in ['n', 'no']:
-                return "🚫 Trade fair pitch declined. Safety first!"
-            else:
-                print("Please enter 'y' for yes or 'n' for no.")
-
-    def startup_quiz_event(self, company):
-        """Startup quiz"""
-        questions = [
-            {"q": "What percentage of Swiss startups fail in the first 5 years?", 
-             "options": ["A) 50%", "B) 70%", "C) 90%"], "correct": "C"},
-            {"q": "What does 'MVP' mean in the startup world?", 
-             "options": ["A) Most Valuable Player", "B) Minimum Viable Product", "C) Maximum Venture Profit"], "correct": "B"},
-            {"q": "Which city has the largest startup ecosystem in Switzerland?", 
-             "options": ["A) Zurich", "B) Geneva", "C) St. Gallen"], "correct": "A"},
-            {"q": "What is the most famous nightclub in St. Gallen?", 
-             "options": ["A) Palazzo", "B) Trischli", "C) Einstein"], "correct": "B"},
+    """Trade fair pitch gamble - returns interactive event"""
+    cost = 1000
+    
+    if company.balance < cost:
+        return f"💸 Trade fair pitch offered, but budget insufficient! Need {cost:,} CHF."
+    
+    return {
+        'type': 'interactive',
+        'event_name': 'trade_fair',
+        'title': '🎪 TRADE FAIR PITCH OPPORTUNITY',
+        'description': f'Cost: {cost:,} CHF<br>50% Chance: +100 customers<br>50% Chance: Flop, money gone<br>Your Budget: {company.balance:,} CHF',
+        'options': [
+            {'id': 'yes', 'text': 'Pitch at trade fair', 'data': {'cost': cost}},
+            {'id': 'no', 'text': 'Decline opportunity', 'data': {}}
         ]
-        
-        question = random.choice(questions)
-        
-        print(f"\n🧠 STARTUP QUIZ BONUS ROUND:")
-        print(f"   ❓ {question['q']}")
-        for option in question['options']:
-            print(f"   {option}")
-        print("   🎁 Correct answer = +2000 CHF bonus!")
-        
-        while True:
-            answer = input("Your answer (A/B/C): ").strip().upper()
-            if answer in ['A', 'B', 'C']:
-                if answer == question['correct']:
-                    bonus = 2000
-                    company.balance += bonus
-                    return (f"🎉 Correct! +{bonus:,} CHF quiz bonus. "
-                           f"You know your way around the startup world!")
-                else:
-                    return (f"❌ Wrong! Correct answer was {question['correct']}. "
-                           f"No bonus, but at least you learned something!")
-            else:
-                print("Please enter A, B, or C.")
+    }
 
-    def dragons_den_event(self, company):
-        """Dragons' Den Switzerland"""
-        cost = 500  # Travel costs
-        
-        print(f"\n🦈 DRAGONS' DEN SWITZERLAND:")
-        print(f"   📺 TV appearance chance!")
-        print(f"   💸 Cost: {cost:,} CHF (travel, hotel)")
-        print(f"   🎲 50% Chance: +5000 CHF investment")
-        print(f"   🎲 50% Chance: Embarrassment, -0.5 reputation")
-        print(f"   💰 Your Budget: {company.balance:,} CHF")
-        
-        if company.balance < cost:
-            return f"📺 'Dragons' Den' invitation, but travel too expensive! Need {cost:,} CHF."
-        
-        while True:
-            choice = input("Enter the Dragons' Den? (y/n): ").strip().lower()
-            if choice in ['y', 'yes']:
-                company.balance -= cost
-                if random.random() < 0.5:  # 50% success
-                    investment = 5000
-                    company.balance += investment
-                    reputation_boost = random.uniform(0.3, 0.5)
-                    company.reputation += reputation_boost
-                    return (f"🦈 Dragons are thrilled! +{investment:,} CHF investment, "
-                           f"TV fame boosts reputation! 'Deal!' 🤝")
-                else:
-                    reputation_loss = random.uniform(0.4, 0.6)
-                    company.reputation = max(0.1, company.reputation - reputation_loss)
-                    return (f"😬 Pitch went wrong! 'I'm out!' from all dragons. "
-                           f"-{cost:,} CHF costs, reputation suffers. Embarrassing TV moment!")
-            elif choice in ['n', 'no']:
-                return "🚫 'Dragons' Den' declined. No risk, no TV fame."
-            else:
-                print("Please enter 'y' for yes or 'n' for no.")
+def startup_quiz_event(self, company):
+    """Startup quiz - returns interactive event"""
+    questions = [
+        {"q": "What percentage of Swiss startups fail in the first 5 years?", 
+         "options": [{"id": "A", "text": "50%"}, {"id": "B", "text": "70%"}, {"id": "C", "text": "90%"}], "correct": "C"},
+        {"q": "What does 'MVP' mean in the startup world?", 
+         "options": [{"id": "A", "text": "Most Valuable Player"}, {"id": "B", "text": "Minimum Viable Product"}, {"id": "C", "text": "Maximum Venture Profit"}], "correct": "B"},
+        {"q": "Which city has the largest startup ecosystem in Switzerland?", 
+         "options": [{"id": "A", "text": "Zurich"}, {"id": "B", "text": "Geneva"}, {"id": "C", "text": "St. Gallen"}], "correct": "A"},
+        {"q": "What is the most famous nightclub in St. Gallen?", 
+         "options": [{"id": "A", "text": "Palazzo"}, {"id": "B", "text": "Trischli"}, {"id": "C", "text": "Einstein"}], "correct": "B"},
+    ]
+    
+    question = random.choice(questions)
+    
+    return {
+        'type': 'interactive',
+        'event_name': 'quiz',
+        'title': '🧠 STARTUP QUIZ BONUS ROUND',
+        'description': f'{question["q"]}<br>Correct answer = +2,000 CHF bonus!',
+        'options': [{'id': opt['id'], 'text': opt['text'], 'data': {'correct': question['correct']}} for opt in question['options']]
+    }
+
+def dragons_den_event(self, company):
+    """Dragons' Den Switzerland - returns interactive event"""
+    cost = 500
+    
+    if company.balance < cost:
+        return f"📺 'Dragons' Den' invitation, but travel too expensive! Need {cost:,} CHF."
+    
+    return {
+        'type': 'interactive',
+        'event_name': 'dragons_den',
+        'title': '🦈 DRAGONS\' DEN SWITZERLAND',
+        'description': f'TV appearance chance!<br>Cost: {cost:,} CHF (travel, hotel)<br>50% Chance: +5,000 CHF investment<br>50% Chance: Embarrassment, -0.5 reputation<br>Your Budget: {company.balance:,} CHF',
+        'options': [
+            {'id': 'yes', 'text': 'Enter the Dragons\' Den', 'data': {'cost': cost}},
+            {'id': 'no', 'text': 'Decline invitation', 'data': {}}
+        ]
+    }
 
     # ===== HUMOROUS MESSAGES =====
 
