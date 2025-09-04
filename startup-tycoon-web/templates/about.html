@@ -2,96 +2,169 @@
 {% block content %}
 <h1>📍 About St. Gallen Startup Tycoon</h1>
 
-<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 2rem; margin: 2rem 0;">
-    <div style="background: #f8f9fa; padding: 2rem; border-radius: 15px;">
-        <h2>🎮 Game Overview</h2>
-        <p>St. Gallen Startup Tycoon is a business simulation game where you build and manage your own startup in the beautiful Eastern Swiss city of St. Gallen.</p>
-        
-        <h3>🎯 Objective</h3>
-        <p>Survive 12 months, build a successful company, and achieve the highest score on the leaderboard!</p>
-        
-        <h3>📊 Scoring</h3>
-        <ul>
-            <li><strong>Balance:</strong> 1 point per CHF</li>
-            <li><strong>Customers:</strong> 10 points each</li>
-            <li><strong>Reputation:</strong> 1000 points per point</li>
-            <li><strong>Product Quality:</strong> 1000 points per point</li>
-        </ul>
-    </div>
-</div>
+<div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(400px,1fr)); gap:2rem; margin:2rem 0;">
+  <div style="background:#f8f9fa; padding:2rem; border-radius:15px;">
+    <h2>🎮 Game Overview</h2>
+    <p>St. Gallen Startup Tycoon is a business simulation game where you build and manage your own startup in the beautiful Eastern Swiss city of St. Gallen.</p>
 
-<div style="background: #fff3cd; border: 2px solid #ffeaa7; border-radius: 15px; padding: 2rem; margin: 2rem 0;">
-    <h2>🎲 Game Mechanics</h2>
-    
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 1rem;">
-        <div>
-            <h3>💼 Monthly Actions</h3>
-            <ul>
-                <li><strong>Marketing:</strong> Gain customers and reputation</li>
-                <li><strong>Development:</strong> Improve product quality</li>
-                <li><strong>Hiring:</strong> Add employees for productivity</li>
-                <li><strong>Research:</strong> Gain market insights and protection</li>
-                <li><strong>Expansion:</strong> Major growth across Eastern Switzerland</li>
-                <li><strong>Relaxation:</strong> Save money, potentially gain inspiration</li>
-            </ul>
-        </div>
-        
-        <div>
-            <h3>🎭 Random Events</h3>
-            <ul>
-                <li>Swiss economic conditions</li>
-                <li>Local St. Gallen happenings</li>
-                <li>Business opportunities and crises</li>
-      
-                <li>Humorous Swiss-themed scenarios</li>
-            </ul>
-        </div>
-    </div>
-</div>
+    <h3>🎯 Objective</h3>
+    <p>Survive 12 months, build a successful company, and achieve the highest score on the leaderboard!</p>
 
-<div style="background: #d4edda; border: 2px solid #c3e6cb; border-radius: 15px; padding: 2rem; margin: 2rem 0;">
-    <h2>💡 Tips for Success</h2>
-    
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-top: 1rem;">
-        <div>
-            <h4>💰 Financial Management</h4>
-            <p>Watch your balance carefully. Going below -5,000 CHF means bankruptcy!</p>
-        </div>
-        
-        <div>
-            <h4>🎯 Balanced Growth</h4>
-            <p>Don't neglect any metric. Balance customers, quality, and reputation.</p>
-        </div>
-        
-        <div>
-            <h4>🔬 Research Investment</h4>
-            <p>Research protection helps reduce negative event impacts.</p>
-        </div>
-        
-        <div>
-            <h4>🎲 Risk vs. Reward</h4>
-            <p>Some events offer high-risk, high-reward choices. Choose wisely!</p>
-        </div>
-    </div>
-</div>
-
-<div style="background: #f8d7da; border: 2px solid #f5c6cb; border-radius: 15px; padding: 2rem; margin: 2rem 0;">
-    <h2>⚠️ Bankruptcy & Loans</h2>
-    <p>If your balance goes negative, you can take emergency loans to survive:</p>
+    <h3>📊 Scoring</h3>
     <ul>
-        <li><strong>Emergency Loan:</strong> 5,000 CHF immediate cash</li>
-        <li><strong>Repayment:</strong> 2,000 CHF per month for 3 months</li>
-        <li><strong>High Interest:</strong> Pay back 6,000 CHF total</li>
-        <li><strong>Last Resort:</strong> Better than bankruptcy!</li>
+      <li><strong>Balance:</strong> 1 point per CHF</li>
+      <li><strong>Customers:</strong> 10 points each</li>
+      <li><strong>Reputation:</strong> 1000 points per point</li>
+      <li><strong>Product Quality:</strong> 1000 points per point</li>
     </ul>
-    <p><em>If you can't repay loans and reach -5,000 CHF, it's game over!</em></p>
+  </div>
 </div>
 
-<div style="text-align: center; margin: 3rem 0;">
-    <h2>🚀 Ready to Build Your Empire?</h2>
-    <a href="/" class="btn" style="font-size: 18px; padding: 15px 30px;">Start Playing Now!</a>
-    <a href="/leaderboard" class="btn btn-success" style="font-size: 18px; padding: 15px 30px;">View Leaderboard</a>
+<!-- DETAILED ACTION EFFECTS -->
+<div style="background:#e7f1ff; border:2px solid #cfe2ff; border-radius:15px; padding:2rem; margin:2rem 0;">
+  <h2>🧩 Monthly Actions and Exact Effects</h2>
+
+  <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:1.25rem; margin-top:1rem;">
+    <div style="background:#fff; border:1px solid #dde5ff; border-radius:12px; padding:1rem 1.25rem;">
+      <h3>📣 HSG Campus Marketing <small>(1,500 CHF)</small></h3>
+      <ul style="margin:0;">
+        <li><strong>+15 to +35 customers</strong></li>
+        <li><strong>+0.1 to +0.3 reputation</strong></li>
+        <li><em>Economic Boom event:</em> next 2 Marketing actions have <strong>double effect</strong>.</li>
+      </ul>
+    </div>
+
+    <div style="background:#fff; border:1px solid #dde5ff; border-radius:12px; padding:1rem 1.25rem;">
+      <h3>🛠️ Swiss Quality Development <small>(2,000 CHF)</small></h3>
+      <ul style="margin:0;">
+        <li><strong>+0.3 to +0.5 product quality</strong></li>
+        <li><strong>+5 to +15 customers</strong></li>
+      </ul>
+    </div>
+
+    <div style="background:#fff; border:1px solid #dde5ff; border-radius:12px; padding:1rem 1.25rem;">
+      <h3>👥 Recruit Talent <small>(3,000 CHF)</small></h3>
+      <ul style="margin:0;">
+        <li><strong>+1 employee</strong></li>
+        <li><strong>+8 to +20 customers</strong> (productivity boost)</li>
+        <li><strong>+0.1 to +0.2 product quality</strong></li>
+        <li><strong>Monthly costs +2,000 CHF</strong> for each employee</li>
+      </ul>
+    </div>
+
+    <div style="background:#fff; border:1px solid #dde5ff; border-radius:12px; padding:1rem 1.25rem;">
+      <h3>🔬 Market Research <small>(1,000 CHF)</small></h3>
+      <ul style="margin:0;">
+        <li><strong>+1 research protection</strong></li>
+        <li><strong>+5 to +12 customers</strong></li>
+        <li><em>Helps mitigate certain negative events</em> like legal fines and bureaucracy delays.</li>
+      </ul>
+    </div>
+
+    <div style="background:#fff; border:1px solid #dde5ff; border-radius:12px; padding:1rem 1.25rem;">
+      <h3>🏢 Regional Expansion <small>(4,000 CHF)</small></h3>
+      <ul style="margin:0;">
+        <li><strong>+25 to +45 customers</strong></li>
+        <li><strong>+1 employee</strong> (monthly costs +2,000 CHF)</li>
+        <li><strong>+0.2 to +0.4 reputation</strong></li>
+        <li><strong>+0.2 to +0.4 product quality</strong></li>
+      </ul>
+    </div>
+
+    <div style="background:#fff; border:1px solid #dde5ff; border-radius:12px; padding:1rem 1.25rem;">
+      <h3>🏖️ Chill at Drei Weihern <small>(free)</small></h3>
+      <ul style="margin:0;">
+        <li>30% chance for inspiration: <strong>+3 to +8 customers</strong></li>
+        <li>Otherwise no direct effect</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- FINANCE FORMULAS -->
+<div style="background:#fff3cd; border:2px solid #ffeaa7; border-radius:15px; padding:2rem; margin:2rem 0;">
+  <h2>💵 How Profit and Loss Are Calculated</h2>
+
+  <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); gap:1.5rem; margin-top:1rem;">
+    <div>
+      <h3>📈 Monthly Revenue</h3>
+      <p>Each month, if there is no special event blocking revenue:</p>
+      <pre style="white-space:pre-wrap; background:#fff; border-radius:10px; padding:0.8rem; border:1px solid #ffeaa7;">
+base_revenue_per_customer = 5 + random between 0 and 3
+monthly_revenue = customers × product_quality × reputation × base_revenue_per_customer
+      </pre>
+      <p><em>Example:</em> 200 customers, quality 2.0, reputation 1.5 gives roughly 200 × 2.0 × 1.5 × ~6.5 ≈ 3,900 CHF.</p>
+    </div>
+
+    <div>
+      <h3>💸 Monthly Operating Costs</h3>
+      <pre style="white-space:pre-wrap; background:#fff; border-radius:10px; padding:0.8rem; border:1px solid #ffeaa7;">
+monthly_expenses = max(100, 500 + employees × 2000)
+      </pre>
+      <p>Events can temporarily increase or reduce costs. Examples: interest rate rise +500 CHF per month, tax reduction −500 CHF per month, startup dog +150 to +250 CHF per month.</p>
+    </div>
+
+    <div>
+      <h3>🧮 Net Result and Loans</h3>
+      <pre style="white-space:pre-wrap; background:#fff; border-radius:10px; padding:0.8rem; border:1px solid #ffeaa7;">
+net_income = monthly_revenue − monthly_expenses
+balance = balance + net_income
+then: pay active loans (sum of monthly payments)
+      </pre>
+      <p><strong>Emergency loan:</strong> get 5,000 CHF immediately, repay 2,000 CHF per month for 3 months. If your balance drops below −5,000 CHF you go bankrupt.</p>
+    </div>
+  </div>
+</div>
+
+<!-- EVENTS SHORT INFO -->
+<div style="background:#d4edda; border:2px solid #c3e6cb; border-radius:15px; padding:2rem; margin:2rem 0;">
+  <h2>🎭 Random Events</h2>
+  <ul>
+    <li>Economy and local St. Gallen happenings can add or remove customers and balance.</li>
+    <li>Some events adjust monthly costs or temporarily block revenue for one month.</li>
+    <li>Interactive events (Quiz, Trade Fair, Dragons Den) may ask for choices with risk and reward.</li>
+    <li>Research protection reduces the impact of several negative events.</li>
+  </ul>
+</div>
+
+<!-- TIPS -->
+<div style="background:#e8f5e9; border:2px solid #c8e6c9; border-radius:15px; padding:2rem; margin:2rem 0;">
+  <h2>💡 Tips for Success</h2>
+  <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:1.5rem; margin-top:1rem;">
+    <div>
+      <h4>💰 Financial Management</h4>
+      <p>Watch your balance carefully. Going below -5,000 CHF means bankruptcy.</p>
+    </div>
+    <div>
+      <h4>🎯 Balanced Growth</h4>
+      <p>Balance customers, quality, and reputation for sustainable revenue.</p>
+    </div>
+    <div>
+      <h4>🔬 Research Investment</h4>
+      <p>Research protection helps reduce negative event impacts.</p>
+    </div>
+    <div>
+      <h4>🎲 Risk vs. Reward</h4>
+      <p>Some events offer high risk and high reward. Choose wisely.</p>
+    </div>
+  </div>
+</div>
+
+<!-- LOANS -->
+<div style="background:#f8d7da; border:2px solid #f5c6cb; border-radius:15px; padding:2rem; margin:2rem 0;">
+  <h2>⚠️ Bankruptcy and Loans</h2>
+  <ul>
+    <li><strong>Emergency Loan:</strong> 5,000 CHF immediate cash</li>
+    <li><strong>Repayment:</strong> 2,000 CHF per month for 3 months</li>
+    <li><strong>Total payback:</strong> 6,000 CHF</li>
+    <li><strong>Game over:</strong> Balance below −5,000 CHF</li>
+  </ul>
+</div>
+
+<div style="text-align:center; margin:3rem 0;">
+  <h2>🚀 Ready to Build Your Empire?</h2>
+  <a href="/" class="btn" style="font-size:18px; padding:15px 30px;">Start Playing Now!</a>
+  <a href="/leaderboard" class="btn btn-success" style="font-size:18px; padding:15px 30px;">View Leaderboard</a>
 </div>
 
 {% endblock %}
-
