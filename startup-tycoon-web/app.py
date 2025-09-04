@@ -194,7 +194,14 @@ def complete_turn():
             action_enum = ActionType(action_type)
         except ValueError:
             return jsonify({'success': False, 'error': f'Ungültige Aktion: {action_type}'}), 400
-            
+        
+        # Hole die Action Details für die Kosten
+        action = game.actions[action_enum]
+        action_cost = action.cost
+        
+        # Balance vor der Aktion merken
+        balance_before_action = company.balance
+        
         action_result = game.execute_action(company, action_enum)
         
         # 2. Random Event triggern (nur wenn nicht bankrott)
@@ -207,8 +214,8 @@ def complete_turn():
         if not company.is_bankrupt:
             company.month = current_month
             
-            # Balance vor Finanzen merken (nach Events!)
-            balance_before_finances = company.balance
+            # Balance nach Event aber vor monatlichen Finanzen
+            balance_after_event = company.balance
             
             finances = company.process_monthly_finances()
             loan_status = company.process_loan_payments()
@@ -216,20 +223,34 @@ def complete_turn():
             # Neue Balance nach allen Änderungen
             balance_after_finances = company.balance
             
+            # Berechne die einzelnen Änderungen
+            event_change = balance_after_event - (balance_before_action - action_cost)
+            
             finance_parts = [
                 f"Einnahmen: +{finances['revenue']:,} CHF",
                 f"Ausgaben: -{finances['expenses']:,} CHF"
             ]
             
+            # Nur anzeigen wenn tatsächlich investiert wurde
+            if action_cost > 0:
+                finance_parts.append(f"Investiert: -{action_cost:,} CHF")
+            
+            # Event-Änderung anzeigen (falls vorhanden)
+            if event_change != 0:
+                if event_change > 0:
+                    finance_parts.append(f"Event: +{event_change:,} CHF")
+                else:
+                    finance_parts.append(f"Event: {event_change:,} CHF")
+            
             if loan_status:
                 finance_parts.append(loan_status)
             
-            # Gesamtveränderung anzeigen (inkl. Events)
-            total_change = balance_after_finances - balance_before_finances
+            # Gesamtveränderung anzeigen
+            total_change = balance_after_finances - balance_before_action
             if total_change >= 0:
-                finance_parts.append(f"Gesamt Veränderung: +{total_change:,} CHF")
+                finance_parts.append(f"Gesamte Veränderung: +{total_change:,} CHF")
             else:
-                finance_parts.append(f"Gesamt Veränderung: {total_change:,} CHF")
+                finance_parts.append(f"Gesamte Veränderung: {total_change:,} CHF")
             
             finance_parts.append(f"Neue Balance: {balance_after_finances:,} CHF")
             
@@ -392,4 +413,3 @@ init_db()
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     app.run(debug=False, host='0.0.0.0', port=port)
-
