@@ -90,8 +90,7 @@
       <h3>📈 Monthly Revenue</h3>
       <p>Each month, if there is no special event blocking revenue:</p>
       <pre style="white-space:pre-wrap; background:#fff; border-radius:10px; padding:0.8rem; border:1px solid #ffeaa7;">
-      <p>base_revenue_per_customer = 5 + random between 0 and 3</p>
-      <p>monthly_revenue = customers × product_quality × reputation × base_revenue_per_customer</p>
+      <p>The monthly revenue is calculated by the amout of customer × reputation × base revenue (randomly between 5 and 8)</p>
       </pre>
       <p><em>Example:</em> 200 customers, quality 2.0, reputation 1.5 gives roughly 200 × 2.0 × 1.5 × ~6.5 ≈ 3,900 CHF.</p>
     </div>
@@ -99,19 +98,9 @@
     <div>
       <h3>💸 Monthly Operating Costs</h3>
       <pre style="white-space:pre-wrap; background:#fff; border-radius:10px; padding:0.8rem; border:1px solid #ffeaa7;">
-      <p>monthly_expenses = max(100, 500 + employees × 2000)</p>
+      <p>The monthly costs is calculated by 500 + the amout of employees × 2000</p>
       </pre>
       <p>Events can temporarily increase or reduce costs. Examples: interest rate rise +500 CHF per month, tax reduction −500 CHF per month, startup dog +150 to +250 CHF per month.</p>
-    </div>
-
-    <div>
-      <h3>🧮 Net Result and Loans</h3>
-      <pre style="white-space:pre-wrap; background:#fff; border-radius:10px; padding:0.8rem; border:1px solid #ffeaa7;">
-      <p>net_income = monthly_revenue − monthly_expenses</p>
-      <p>balance = balance + net_income</p>
-      <p>then: pay active loans (sum of monthly payments)</p>
-      </pre>
-      <p><strong>Emergency loan:</strong> get 5,000 CHF immediately, repay 2,000 CHF per month for 3 months. If your balance drops below −5,000 CHF you go bankrupt.</p>
     </div>
   </div>
 </div>
@@ -168,4 +157,5 @@
 </div>
 
 {% endblock %}
+
 
