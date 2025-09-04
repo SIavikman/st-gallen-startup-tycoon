@@ -9,9 +9,9 @@ nav { display: none !important; }
 <h1>Monat {{ current_month }}/12 - {{ company.owner_name }}'s Startup</h1>
 
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 20px 0;">
-    <div style="background: #e9ecef; padding: 15px; border-radius: 8px; text-align: center;">
+    <div style="background: {% if company.balance < 0 %}#f8d7da{% else %}#e9ecef{% endif %}; padding: 15px; border-radius: 8px; text-align: center;">
         <h3>💰 Balance</h3>
-        <p data-balance>{{ "{:,}".format(company.balance) }} CHF</p>
+        <p data-balance style="{% if company.balance < 0 %}color: #dc3545; font-weight: bold;{% endif %}">{{ "{:,}".format(company.balance) }} CHF</p>
     </div>
     <div style="background: #e9ecef; padding: 15px; border-radius: 8px; text-align: center;">
         <h3>👥 Customers</h3>
@@ -31,40 +31,80 @@ nav { display: none !important; }
     </div>
     <div style="background: #e9ecef; padding: 15px; border-radius: 8px; text-align: center;">
         <h3>📊 Score</h3>
-        <p data-score>{{ "{:,.0f}".format(company.balance + company.customers*10 + company.reputation*1000 + company.product_quality*1000) }}</p>
+        <p data-score>{{ "{:,}".format(round(company.balance + (company.customers * 10) + (company.reputation * 1000) + (company.product_quality * 1000))) }}</p>
     </div>
 </div>
 
+{% if company.balance < 0 and not company.is_bankrupt %}
+<!-- Emergency Situation - Schulden -->
+<div style="background: #f8d7da; border: 3px solid #dc3545; border-radius: 10px; padding: 20px; margin: 20px 0;">
+    <h2 style="color: #dc3545;">⚠️ KRITISCHE SITUATION - Unternehmen in Schulden!</h2>
+    <p style="font-size: 1.2em;">Dein Kontostand ist negativ! Du musst dringend handeln:</p>
+</div>
+
+<h3>Verfügbare Notfall-Aktionen:</h3>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px; margin: 20px 0;">
+    <div class="action-card emergency" onclick="executeAction('take_loan')" style="border-color: #ffc107; background: #fff3cd;">
+        <div style="font-weight: bold; color: #856404;">🏛️ Emergency Bank Loan</div>
+        <div style="color: #856404;">Sofort: +5,000 CHF</div>
+        <div style="font-size: 0.9em; color: #856404;">Rückzahlung: 2,000 CHF/Monat für 3 Monate</div>
+        <div style="font-size: 0.8em; color: #dc3545; margin-top: 5px;">⚠️ Hohe Zinsen aber gibt dir eine Chance!</div>
+    </div>
+    
+    <div class="action-card emergency" onclick="executeAction('go_bankrupt')" style="border-color: #dc3545; background: #f8d7da;">
+        <div style="font-weight: bold; color: #721c24;">💀 Bankrott erklären</div>
+        <div style="color: #721c24;">Aufgeben und Firma schließen</div>
+        <div style="font-size: 0.9em; color: #721c24;">Spiel ist vorbei!</div>
+    </div>
+</div>
+
+{% else %}
+<!-- Normale Aktionen -->
 <h3>Verfügbare Aktionen:</h3>
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; margin: 20px 0;">
-    <div class="action-card" onclick="executeAction('marketing')">
+    <div class="action-card {% if company.balance < 1500 %}disabled{% endif %}" onclick="{% if company.balance >= 1500 %}executeAction('marketing'){% endif %}">
         <div style="font-weight: bold;">HSG Campus Marketing</div>
         <div>Kosten: 1,500 CHF</div>
         <div style="font-size: 0.9em; color: #666;">Target wealthy HSG students</div>
+        {% if company.balance < 1500 %}
+        <div style="font-size: 0.8em; color: #dc3545;">⚠️ Nicht genug Geld!</div>
+        {% endif %}
     </div>
     
-    <div class="action-card" onclick="executeAction('development')">
+    <div class="action-card {% if company.balance < 2000 %}disabled{% endif %}" onclick="{% if company.balance >= 2000 %}executeAction('development'){% endif %}">
         <div style="font-weight: bold;">Swiss Quality Development</div>
         <div>Kosten: 2,000 CHF</div>
         <div style="font-size: 0.9em; color: #666;">Meet Swiss quality standards</div>
+        {% if company.balance < 2000 %}
+        <div style="font-size: 0.8em; color: #dc3545;">⚠️ Nicht genug Geld!</div>
+        {% endif %}
     </div>
     
-    <div class="action-card" onclick="executeAction('hiring')">
+    <div class="action-card {% if company.balance < 3000 %}disabled{% endif %}" onclick="{% if company.balance >= 3000 %}executeAction('hiring'){% endif %}">
         <div style="font-weight: bold;">Recruit Talent</div>
         <div>Kosten: 3,000 CHF</div>
         <div style="font-size: 0.9em; color: #666;">Hire HSG graduates</div>
+        {% if company.balance < 3000 %}
+        <div style="font-size: 0.8em; color: #dc3545;">⚠️ Nicht genug Geld!</div>
+        {% endif %}
     </div>
     
-    <div class="action-card" onclick="executeAction('research')">
+    <div class="action-card {% if company.balance < 1000 %}disabled{% endif %}" onclick="{% if company.balance >= 1000 %}executeAction('research'){% endif %}">
         <div style="font-weight: bold;">Market Research</div>
         <div>Kosten: 1,000 CHF</div>
         <div style="font-size: 0.9em; color: #666;">Study St. Gallen market trends</div>
+        {% if company.balance < 1000 %}
+        <div style="font-size: 0.8em; color: #dc3545;">⚠️ Nicht genug Geld!</div>
+        {% endif %}
     </div>
     
-    <div class="action-card" onclick="executeAction('expansion')">
+    <div class="action-card {% if company.balance < 4000 %}disabled{% endif %}" onclick="{% if company.balance >= 4000 %}executeAction('expansion'){% endif %}">
         <div style="font-weight: bold;">Regional Expansion</div>
         <div>Kosten: 4,000 CHF</div>
         <div style="font-size: 0.9em; color: #666;">Expand across Eastern Switzerland</div>
+        {% if company.balance < 4000 %}
+        <div style="font-size: 0.8em; color: #dc3545;">⚠️ Nicht genug Geld!</div>
+        {% endif %}
     </div>
     
     <div class="action-card" onclick="executeAction('nothing')">
@@ -73,6 +113,22 @@ nav { display: none !important; }
         <div style="font-size: 0.9em; color: #666;">Relax by the lakes</div>
     </div>
 </div>
+{% endif %}
+
+<!-- Anzeige von aktiven Krediten -->
+{% if company.loans %}
+<div style="background: #fff3cd; border: 2px solid #ffc107; border-radius: 10px; padding: 15px; margin: 20px 0;">
+    <h4 style="color: #856404;">💳 Aktive Kredite:</h4>
+    {% for loan in company.loans %}
+    <div style="margin: 10px 0;">
+        <strong>Kredit {{ loop.index }}:</strong> 
+        Restschuld: {{ "{:,}".format(loan.amount) }} CHF | 
+        Monatliche Rate: {{ "{:,}".format(loan.monthly_payment) }} CHF | 
+        Verbleibende Monate: {{ loan.months_remaining }}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
 
 <style>
 .action-card {
@@ -83,15 +139,18 @@ nav { display: none !important; }
     cursor: pointer;
     transition: all 0.3s;
 }
-.action-card:hover {
+.action-card:hover:not(.disabled) {
     border-color: #007bff;
     transform: translateY(-2px);
 }
-.action-card:disabled,
 .action-card.disabled {
     opacity: 0.6;
-    pointer-events: none;
     cursor: not-allowed;
+    background: #e9ecef;
+}
+.action-card.emergency:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
 }
 </style>
 
@@ -140,7 +199,6 @@ function executeAction(actionType) {
     // Disable all action cards
     const buttons = document.querySelectorAll('.action-card');
     buttons.forEach(btn => {
-        btn.classList.add('disabled');
         btn.style.pointerEvents = 'none';
         btn.style.opacity = '0.6';
     });
@@ -174,7 +232,6 @@ function executeAction(actionType) {
         } else {
             showMessage('Fehler: ' + data.error, false, () => {
                 buttons.forEach(btn => {
-                    btn.classList.remove('disabled');
                     btn.style.pointerEvents = 'auto';
                     btn.style.opacity = '1';
                 });
@@ -185,7 +242,6 @@ function executeAction(actionType) {
         console.error('Error:', error);
         showMessage('Netzwerkfehler: ' + error.message, false, () => {
             buttons.forEach(btn => {
-                btn.classList.remove('disabled');
                 btn.style.pointerEvents = 'auto';
                 btn.style.opacity = '1';
             });
@@ -195,5 +251,3 @@ function executeAction(actionType) {
 </script>
 
 {% endblock %}
-
-
