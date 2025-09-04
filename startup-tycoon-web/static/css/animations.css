@@ -1,0 +1,26 @@
+/* Game Over Animation CSS */
+:root {
+  --bg: #0b0b10;
+  --accent: #ff2d55;
+  --accent-2: #ffcc00;
+  --text: #e6e6ee;
+}
+
+.go-overlay {
+  position: fixed;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(6px) saturate(120%);
+  background:
+    radial-gradient(1200px 600px at 50% -10%, rgba(255, 45, 85, 0.15), transparent 60%),
+    radial-gradient(800px 400px at 50% 110%, rgba(255, 204, 0, 0.1), transparent 60%),
+    rgba(7, 7, 10, 0.7);
+  z-index: 9999;
+  overflow: hidden;
+}
+
+.go-overlay.is-open { display: flex; }
+
+/* ... Rest des CSS Codes von ChatGPT hier einfügen ... */
