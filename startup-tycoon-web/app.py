@@ -273,10 +273,10 @@ def get_company_status():
     current_month = session.get('current_month', 1)
     
     # Berechne aktuellen Score
-    score = (company_dict['balance'] + 
+    score = round((company_dict['balance'] + 
              (company_dict['customers'] * 10) + 
              (company_dict['reputation'] * 1000) + 
-             (company_dict['product_quality'] * 1000))
+             (company_dict['product_quality'] * 1000)),2)
     
     return jsonify({
         'success': True,
@@ -392,3 +392,4 @@ init_db()
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     app.run(debug=False, host='0.0.0.0', port=port)
+
