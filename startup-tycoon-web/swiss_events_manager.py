@@ -291,6 +291,28 @@ class SwissEventManager:
             protection_text = ""
         company.balance -= fine
         company.reputation -= random.uniform(0.1, 0.2)
+        violations = ["Data protection violation", "Anti-competitive behavior", "Tax irregularity"]
+        violation = random.choice(violations)
+        return f"⚖️ Legal penalty: {violation}! -{fine:,} CHF fine{protection_text}"
+
+    def employee_quits_event(self, company):
+        if company.employees <= 1:
+            return "👋 An employee wanted to quit, but you're alone in the team anyway!"
+        company.employees -= 1
+        quality_loss = random.uniform(0.1, 0.2)
+        customer_loss = random.randint(5, 12)
+        company.product_quality = max(0.1, company.product_quality - quality_loss)
+        company.customers = max(0, company.customers - customer_loss)
+        quit_reasons = ["better offer", "burnout", "moving to Zurich", "starting own startup"]
+        reason = random.choice(quit_reasons)
+        return f"👋 Key employee quits due to '{reason}'. -1 Employee, quality suffers, {customer_loss} customers unhappy"
+
+    def big_customer_leaves_event(self, company):
+        customer_loss = random.randint(25, 35)
+        revenue_loss = random.randint(800, 1200)
+        company.customers = max(0, company.customers - customer_loss)
+        company.balance -= revenue_loss
+        company.reputation -= random.uniform(0.1, 0.2)
         return f"😤 Big customer switches to competition! -{customer_loss} customers, -{revenue_loss:,} CHF lost"
 
     def social_media_shitstorm_event(self, company):
@@ -372,26 +394,4 @@ class SwissEventManager:
         reputation_gain = random.uniform(0.15, 0.25)
         company.product_quality = max(0.1, company.product_quality - quality_loss)
         company.reputation += reputation_gain
-        return f"🤪 Intern rewrites code in Comic Sans! Quality suffers but everyone laughs about it (+Reputation)" random.uniform(0.1, 0.2)
-        violations = ["Data protection violation", "Anti-competitive behavior", "Tax irregularity"]
-        violation = random.choice(violations)
-        return f"⚖️ Legal penalty: {violation}! -{fine:,} CHF fine{protection_text}"
-
-    def employee_quits_event(self, company):
-        if company.employees <= 1:
-            return "👋 An employee wanted to quit, but you're alone in the team anyway!"
-        company.employees -= 1
-        quality_loss = random.uniform(0.1, 0.2)
-        customer_loss = random.randint(5, 12)
-        company.product_quality = max(0.1, company.product_quality - quality_loss)
-        company.customers = max(0, company.customers - customer_loss)
-        quit_reasons = ["better offer", "burnout", "moving to Zurich", "starting own startup"]
-        reason = random.choice(quit_reasons)
-        return f"👋 Key employee quits due to '{reason}'. -1 Employee, quality suffers, {customer_loss} customers unhappy"
-
-    def big_customer_leaves_event(self, company):
-        customer_loss = random.randint(25, 35)
-        revenue_loss = random.randint(800, 1200)
-        company.customers = max(0, company.customers - customer_loss)
-        company.balance -= revenue_loss
-        company.reputation -=
+        return f"🤪 Intern rewrites code in Comic Sans! Quality suffers but everyone laughs about it (+Reputation)"
