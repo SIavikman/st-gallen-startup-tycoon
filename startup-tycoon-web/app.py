@@ -320,51 +320,59 @@ def get_company_status():
 
 @app.route('/api/handle_special_events', methods=['POST'])
 def handle_special_events():
-    """API-Endpoint für interaktive Events wie Quiz und Dragons Den"""
-    if 'company' not in session:
-        return jsonify({'success': False, 'error': 'Kein aktives Spiel'}), 400
+    """API-Endpoint für interaktive Events"""
+    if 'company' not in session or 'pending_event' not in session:
+        return jsonify({'success': False, 'error': 'Kein aktives Event'}), 400
     
     data = request.get_json()
-    event_type = data.get('event_type')
-    event_data = data.get('event_data', {})
+    choice = data.get('choice')
     
     company = dict_to_company(session['company'])
+    event_data = session['pending_event']
     event_manager = SwissEventManager()
     
     try:
-        if event_type == 'quiz_answer':
-            # Quiz-Antwort verarbeiten
-            correct = event_data.get('correct', False)
-            if correct:
+        result = ""
+        
+        if event_data['event_name'] == 'trade_fair':
+            cost = event_data['options'][0]['data'].get('cost', 1000)
+            if choice == 'yes':
+                company.balance -= cost
+                if random.random() < 0.5:
+                    customer_gain = random.randint(90, 110)
+                    company.customers += customer_gain
+                    result = f"🎉 Trade fair pitch successful! -{cost:,} CHF invested, +{customer_gain} enthusiastic customers won!"
+                else:
+                    result = f"😞 Trade fair pitch flopped! -{cost:,} CHF lost. Audience wasn't the target group..."
+            else:
+                result = "🚫 Trade fair pitch declined. Safety first!"
+                
+        elif event_data['event_name'] == 'quiz':
+            correct_answer = event_data['options'][0]['data']['correct']
+            if choice == correct_answer:
                 bonus = 2000
                 company.balance += bonus
-                result = f"Richtig! +{bonus:,} CHF Quiz-Bonus erhalten!"
+                result = f"🎉 Correct! +{bonus:,} CHF quiz bonus. You know your way around the startup world!"
             else:
-                result = "Falsche Antwort, aber trotzdem etwas gelernt!"
+                result = f"❌ Wrong! Correct answer was {correct_answer}. No bonus, but at least you learned something!"
                 
-        elif event_type == 'dragons_den_decision':
-            # Dragons Den Entscheidung
-            participate = event_data.get('participate', False)
-            cost = 500
-            
-            if not participate:
-                result = "Dragons Den abgelehnt. Kein Risiko, kein TV-Ruhm."
-            elif company.balance < cost:
-                result = f"Zu wenig Geld für Dragons Den! Brauche {cost} CHF."
-            else:
+        elif event_data['event_name'] == 'dragons_den':
+            cost = event_data['options'][0]['data'].get('cost', 500)
+            if choice == 'yes':
                 company.balance -= cost
-                if random.random() < 0.5:  # 50% Erfolg
+                if random.random() < 0.5:
                     investment = 5000
                     company.balance += investment
                     company.reputation += random.uniform(0.3, 0.5)
-                    result = f"Dragons Den Erfolg! +{investment:,} CHF Investment und TV-Ruhm!"
+                    result = f"🦈 Dragons are thrilled! +{investment:,} CHF investment, TV fame boosts reputation! 'Deal!' 🤝"
                 else:
                     company.reputation = max(0.1, company.reputation - random.uniform(0.4, 0.6))
-                    result = f"Dragons Den Flop! -{cost:,} CHF verloren, Reputation beschädigt."
-        else:
-            return jsonify({'success': False, 'error': 'Unbekannter Event-Typ'}), 400
+                    result = f"😬 Pitch went wrong! 'I'm out!' from all dragons. -{cost:,} CHF costs, reputation suffers. Embarrassing TV moment!"
+            else:
+                result = "🚫 'Dragons' Den' declined. No risk, no TV fame."
         
-        # Company zurück in Session speichern
+        # Clear pending event and save company
+        session.pop('pending_event', None)
         session['company'] = company_to_dict(company)
         
         return jsonify({
@@ -424,4 +432,5 @@ init_db()
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     app.run(debug=False, host='0.0.0.0', port=port)
+
 
