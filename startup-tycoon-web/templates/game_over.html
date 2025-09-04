@@ -5,35 +5,35 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/animations.css') }}">
 <script src="{{ url_for('static', filename='js/animations.js') }}"></script>
 
-<!-- Versteckter Hauptcontent (wird nach Animation gezeigt) -->
+<!-- Hidden main content (shown after animation) -->
 <div id="main-content" style="display: none;">
     <div style="text-align: center;">
-        <h1>🎉 Spiel Beendet!</h1>
-        <h2>{{ company.owner_name }}'s Endergebnis</h2>
+        <h1>🎉 Game Over!</h1>
+        <h2>{{ company.owner_name }}'s Final Results</h2>
         
         <!-- Humorous End Message Section -->
         {% if humorous_message %}
         <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 25px; border-radius: 15px; margin: 25px 0; box-shadow: 0 8px 25px rgba(0,0,0,0.15);">
-            <h3 style="margin-top: 0; font-size: 1.4em; margin-bottom: 15px;">📢 St. Galler Urteil</h3>
+            <h3 style="margin-top: 0; font-size: 1.4em; margin-bottom: 15px;">📢 St. Gallen Verdict</h3>
             <p style="font-size: 1.3em; margin: 0; font-weight: 500; line-height: 1.4;">{{ humorous_message|safe }}</p>
         </div>
         {% endif %}
         
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 30px 0;">
             <div style="background: #e9ecef; padding: 20px; border-radius: 10px; text-align: center;">
-                <h3>🏆 Endpunktzahl</h3>
+                <h3>🏆 Final Score</h3>
                 <p style="font-size: 2em; font-weight: bold; color: #007bff;">{{ "{:,}".format(final_score) }}</p>
             </div>
             <div style="background: #e9ecef; padding: 20px; border-radius: 10px; text-align: center;">
-                <h3>💰 Endkontostand</h3>
+                <h3>💰 Final Balance</h3>
                 <p style="font-size: 1.5em;">{{ "{:,}".format(company.balance) }} CHF</p>
             </div>
             <div style="background: #e9ecef; padding: 20px; border-radius: 10px; text-align: center;">
-                <h3>👥 Kunden</h3>
+                <h3>👥 Customers</h3>
                 <p style="font-size: 1.5em;">{{ company.customers }}</p>
             </div>
             <div style="background: #e9ecef; padding: 20px; border-radius: 10px; text-align: center;">
-                <h3>👨‍💼 Mitarbeiter</h3>
+                <h3>👨‍💼 Employees</h3>
                 <p style="font-size: 1.5em;">{{ company.employees }}</p>
             </div>
             <div style="background: #e9ecef; padding: 20px; border-radius: 10px; text-align: center;">
@@ -41,7 +41,7 @@
                 <p style="font-size: 1.5em;">{{ "%.1f"|format(company.reputation) }}</p>
             </div>
             <div style="background: #e9ecef; padding: 20px; border-radius: 10px; text-align: center;">
-                <h3>📈 Produktqualität</h3>
+                <h3>📈 Product Quality</h3>
                 <p style="font-size: 1.5em;">{{ "%.1f"|format(company.product_quality) }}</p>
             </div>
         </div>
@@ -49,7 +49,7 @@
         <!-- Special Achievements Section -->
         {% if achievements %}
         <div style="background: #fff3cd; border: 2px solid #ffeaa7; padding: 20px; border-radius: 10px; margin: 20px 0;">
-            <h3 style="margin-top: 0; color: #856404;">🏅 Besondere Erfolge</h3>
+            <h3 style="margin-top: 0; color: #856404;">🏅 Special Achievements</h3>
             <div style="display: grid; gap: 10px;">
                 {% for achievement in achievements %}
                 <div style="background: white; padding: 12px; border-radius: 8px; text-align: left; border-left: 4px solid #ffc107;">
@@ -62,13 +62,13 @@
         
         {% if company.months_survived >= 12 and not company.is_bankrupt %}
         <div style="background: #d4edda; padding: 20px; border-radius: 10px; margin: 20px 0; border: 2px solid #c3e6cb;">
-            <h3>🎊 Herzlichen Glückwunsch!</h3>
-            <p style="font-size: 1.2em;">Du hast alle 12 Monate in St. Gallen überlebt! Dein Erfolg wird ins Leaderboard eingetragen!</p>
+            <h3>🎊 Congratulations!</h3>
+            <p style="font-size: 1.2em;">You survived all 12 months in St. Gallen! Your success will be recorded in the leaderboard!</p>
         </div>
         {% elif company.is_bankrupt %}
         <div style="background: #f8d7da; padding: 20px; border-radius: 10px; margin: 20px 0; border: 2px solid #f5c6cb;">
-            <h3>💀 Bankrott!</h3>
-            <p style="font-size: 1.2em;">Leider ist dein Startup bankrott gegangen. Nur erfolgreiche Unternehmer schaffen es ins Leaderboard!</p>
+            <h3>💀 Bankruptcy!</h3>
+            <p style="font-size: 1.2em;">Unfortunately, your startup went bankrupt. Only successful entrepreneurs make it to the leaderboard!</p>
             {% if bankruptcy_message %}
             <div style="margin-top: 15px; padding: 15px; background: rgba(220, 53, 69, 0.1); border-radius: 8px; border-left: 4px solid #dc3545;">
                 <p style="margin: 0; font-style: italic; font-size: 1.1em;">{{ bankruptcy_message|safe }}</p>
@@ -77,43 +77,44 @@
         </div>
         {% else %}
         <div style="background: #fff3cd; padding: 20px; border-radius: 10px; margin: 20px 0; border: 2px solid #ffeaa7;">
-            <h3>⏰ Zu früh beendet!</h3>
-            <p style="font-size: 1.2em;">Du hast nicht alle 12 Monate geschafft. Nur wer das ganze Jahr überlebt, kommt ins Leaderboard!</p>
+            <h3>⏰ Game Ended Early!</h3>
+            <p style="font-size: 1.2em;">You didn't complete all 12 months. Only those who survive the full year make it to the leaderboard!</p>
         </div>
         {% endif %}
         
         <div style="text-align: center; margin-top: 30px;">
-            <p style="font-size: 1.1em; margin-bottom: 20px;">Du wirst in <span id="countdown">8</span> Sekunden automatisch zum Leaderboard weitergeleitet...</p>
-            <a href="/leaderboard" class="btn" style="font-size: 18px; padding: 15px 30px;">Sofort zum Leaderboard</a>
+            <a href="/leaderboard" class="btn" style="font-size: 18px; padding: 15px 30px;">Go to Leaderboard</a>
+            <br><br>
+            <a href="/" class="btn" style="font-size: 16px; padding: 12px 25px; background-color: #6c757d; border: none;">Start New Game</a>
         </div>
     </div>
 </div>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Warte kurz bis alles geladen ist
+    // Wait a bit until everything is loaded
     setTimeout(() => {
-        // Zeige passende Animation basierend auf Spielergebnis
+        // Show appropriate animation based on game result
         showGameEndAnimation();
     }, 200);
 });
 
 function showGameEndAnimation() {
-    // Hole die Spieldaten aus dem Template
+    // Get game data from template
     const playerName = '{{ company.owner_name }}';
     const finalScore = {{ final_score }};
     const monthsSurvived = {{ company.months_survived }};
     const isBankrupt = {{ 'true' if company.is_bankrupt else 'false' }};
     const humorousMessage = `{{ humorous_message|safe if humorous_message else '' }}`;
     
-    // Prüfe ob gameAnimations verfügbar ist
+    // Check if gameAnimations is available
     if (typeof gameAnimations !== 'undefined') {
-        // Verwende die neue Animationsklasse
+        // Use the new animation class
         gameAnimations.showGameOver(playerName, finalScore, monthsSurvived, isBankrupt, humorousMessage);
         
-        // Override die Buttons um lokale Funktionen zu verwenden
+        // Override the buttons to use local functions
         setTimeout(() => {
-            // Ersetze die onclick-Handler der Buttons
+            // Replace onclick handlers of the buttons
             const primaryBtns = document.querySelectorAll('.go-btn.primary, .go-btn.success');
             const secondaryBtns = document.querySelectorAll('.go-btn:not(.primary):not(.success)');
             
@@ -126,7 +127,7 @@ function showGameEndAnimation() {
             });
         }, 500);
     } else {
-        // Fallback zur alten Animation falls animations.js nicht geladen
+        // Fallback to old animation if animations.js not loaded
         showFallbackAnimation();
     }
 }
@@ -147,18 +148,18 @@ function showFallbackAnimation() {
     overlay.innerHTML = `
         <div class="success-card">
             <h1 class="success-title">
-                GRATULIERE!
-                <span class="sparkle">GRATULIERE!</span>
+                CONGRATULATIONS!
+                <span class="sparkle">CONGRATULATIONS!</span>
             </h1>
-            <p class="success-sub">{{ company.owner_name }}, du hast alle 12 Monate in St. Gallen überlebt!</p>
+            <p class="success-sub">{{ company.owner_name }}, you survived all 12 months in St. Gallen!</p>
             ${humorSection}
             <div class="success-pill" style="display: flex;">
                 <span class="success-dot"></span>
-                <span>Endpunktzahl: <strong>{{ "{:,}".format(final_score) }}</strong></span>
+                <span>Final Score: <strong>{{ "{:,}".format(final_score) }}</strong></span>
             </div>
             <div class="success-actions">
-                <button class="go-btn success" onclick="showResults()">Ergebnisse anzeigen</button>
-                <button class="go-btn" onclick="goToLeaderboard()">Zum Leaderboard</button>
+                <button class="go-btn success" onclick="showResults()">View Results</button>
+                <button class="go-btn" onclick="goToLeaderboard()">Go to Leaderboard</button>
             </div>
         </div>
     `;
@@ -170,15 +171,15 @@ function showFallbackAnimation() {
                 GAME OVER
                 <span class="glitch">GAME OVER</span>
             </h1>
-            <p class="go-sub">{{ company.owner_name }}'s St. Gallen Adventure ist zu Ende!</p>
+            <p class="go-sub">{{ company.owner_name }}'s St. Gallen Adventure has ended!</p>
             ${humorSection}
             <div class="go-pill" style="display: flex;">
                 <span class="go-dot"></span>
-                <span>Endpunktzahl: <strong>{{ "{:,}".format(final_score) }}</strong></span>
+                <span>Final Score: <strong>{{ "{:,}".format(final_score) }}</strong></span>
             </div>
             <div class="go-actions">
-                <button class="go-btn primary" onclick="showResults()">Ergebnisse anzeigen</button>
-                <button class="go-btn" onclick="goToLeaderboard()">Zum Leaderboard</button>
+                <button class="go-btn primary" onclick="showResults()">View Results</button>
+                <button class="go-btn" onclick="goToLeaderboard()">Go to Leaderboard</button>
             </div>
         </div>
     `;
@@ -189,7 +190,7 @@ function showFallbackAnimation() {
 }
 
 function showResults() {
-    // Verstecke Animation
+    // Hide animation
     const gameOverlay = document.querySelector('.go-overlay');
     const successOverlay = document.querySelector('.success-overlay');
     
@@ -204,49 +205,25 @@ function showResults() {
     
     document.documentElement.style.overflow = '';
     
-    // Zeige Hauptcontent
+    // Show main content
     document.getElementById('main-content').style.display = 'block';
-    
-    // Starte Countdown für Leaderboard
-    startCountdown();
 }
 
 function goToLeaderboard() {
     window.location.href = '/leaderboard';
 }
 
-function startCountdown() {
-    let countdown = 8;
-    const countdownElement = document.getElementById('countdown');
-    
-    const timer = setInterval(() => {
-        countdown--;
-        if (countdownElement) {
-            countdownElement.textContent = countdown;
-        }
-        if (countdown <= 0) {
-            clearInterval(timer);
-            window.location.href = '/leaderboard';
-        }
-    }, 1000);
-    
-    // Automatische Weiterleitung nach 8 Sekunden
-    setTimeout(() => {
-        window.location.href = '/leaderboard';
-    }, 8000);
-}
-
-// Automatisch Animation nach bestimmter Zeit ausblenden (falls Nutzer nicht klickt)
+// Auto-hide animation after certain time (if user doesn't click)
 setTimeout(() => {
     {% if company.months_survived >= 12 and not company.is_bankrupt %}
-    // Success: 6 Sekunden warten
+    // Success: wait 6 seconds
     const overlay = document.querySelector('.success-overlay');
     if (overlay && overlay.classList.contains('is-open')) {
         showResults();
     }
     }, 6000);
     {% else %}
-    // Game Over: 4 Sekunden warten
+    // Game Over: wait 4 seconds
     const overlay = document.querySelector('.go-overlay');
     if (overlay && overlay.classList.contains('is-open')) {
         showResults();
