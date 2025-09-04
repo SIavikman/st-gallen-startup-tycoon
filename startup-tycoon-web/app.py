@@ -204,12 +204,23 @@ def complete_turn():
         
         action_result = game.execute_action(company, action_enum)
         
-        # 2. Random Event triggern (nur wenn nicht bankrott)
+       # 2. Random Event triggern (nur wenn nicht bankrott)
         if not company.is_bankrupt:
             event_result = event_manager.trigger_random_event(company)
+            
+            # Check if it's an interactive event
+            if isinstance(event_result, dict) and event_result.get('type') == 'interactive':
+                # Store company state and return interactive event to frontend
+                session['company'] = company_to_dict(company)
+                session['pending_event'] = event_result
+                return jsonify({
+                    'success': True,
+                    'interactive_event': event_result,
+                    'company': company_to_dict(company)
+                })
         else:
             event_result = "Unternehmen ist bankrott - keine Events mehr."
-        
+            
         # 3. Monatliche Finanzen verarbeiten (nur wenn nicht bankrott)
         if not company.is_bankrupt:
             company.month = current_month
@@ -413,3 +424,4 @@ init_db()
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     app.run(debug=False, host='0.0.0.0', port=port)
+
