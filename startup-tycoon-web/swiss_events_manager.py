@@ -187,12 +187,12 @@ class SwissEventManager:
             customer_gain = random.randint(20, 40)
             company.customers += customer_gain
             company.reputation += random.uniform(0.2, 0.4)
-            return (f"🏖️ Your team's Drei Weihern party was legendary! Great networking! "
+            return (f"🖖 Your team's Drei Weihern party was legendary! Great networking! "
                    f"+{customer_gain} customers, reputation boosted!")
         else:
             damage = random.randint(800, 1500)
             company.balance -= damage
-            return (f"🏖️ Drei Weihern party got out of hand... cleanup costs and fines: "
+            return (f"🖖 Drei Weihern party got out of hand... cleanup costs and fines: "
                    f"-{damage:,} CHF")
 
     # ===== POSITIVE COMPANY EVENTS =====
@@ -445,63 +445,63 @@ class SwissEventManager:
     # ===== MINI-GAME EVENTS =====
 
     def trade_fair_gamble_event(self, company):
-    """Trade fair pitch gamble - returns interactive event"""
-    cost = 1000
-    
-    if company.balance < cost:
-        return f"💸 Trade fair pitch offered, but budget insufficient! Need {cost:,} CHF."
-    
-    return {
-        'type': 'interactive',
-        'event_name': 'trade_fair',
-        'title': '🎪 TRADE FAIR PITCH OPPORTUNITY',
-        'description': f'Cost: {cost:,} CHF<br>50% Chance: +100 customers<br>50% Chance: Flop, money gone<br>Your Budget: {company.balance:,} CHF',
-        'options': [
-            {'id': 'yes', 'text': 'Pitch at trade fair', 'data': {'cost': cost}},
-            {'id': 'no', 'text': 'Decline opportunity', 'data': {}}
-        ]
-    }
+        """Trade fair pitch gamble - returns interactive event"""
+        cost = 1000
+        
+        if company.balance < cost:
+            return f"💸 Trade fair pitch offered, but budget insufficient! Need {cost:,} CHF."
+        
+        return {
+            'type': 'interactive',
+            'event_name': 'trade_fair',
+            'title': '🎪 TRADE FAIR PITCH OPPORTUNITY',
+            'description': f'Cost: {cost:,} CHF<br>50% Chance: +100 customers<br>50% Chance: Flop, money gone<br>Your Budget: {company.balance:,} CHF',
+            'options': [
+                {'id': 'yes', 'text': 'Pitch at trade fair', 'data': {'cost': cost}},
+                {'id': 'no', 'text': 'Decline opportunity', 'data': {}}
+            ]
+        }
 
-def startup_quiz_event(self, company):
-    """Startup quiz - returns interactive event"""
-    questions = [
-        {"q": "What percentage of Swiss startups fail in the first 5 years?", 
-         "options": [{"id": "A", "text": "50%"}, {"id": "B", "text": "70%"}, {"id": "C", "text": "90%"}], "correct": "C"},
-        {"q": "What does 'MVP' mean in the startup world?", 
-         "options": [{"id": "A", "text": "Most Valuable Player"}, {"id": "B", "text": "Minimum Viable Product"}, {"id": "C", "text": "Maximum Venture Profit"}], "correct": "B"},
-        {"q": "Which city has the largest startup ecosystem in Switzerland?", 
-         "options": [{"id": "A", "text": "Zurich"}, {"id": "B", "text": "Geneva"}, {"id": "C", "text": "St. Gallen"}], "correct": "A"},
-        {"q": "What is the most famous nightclub in St. Gallen?", 
-         "options": [{"id": "A", "text": "Palazzo"}, {"id": "B", "text": "Trischli"}, {"id": "C", "text": "Einstein"}], "correct": "B"},
-    ]
-    
-    question = random.choice(questions)
-    
-    return {
-        'type': 'interactive',
-        'event_name': 'quiz',
-        'title': '🧠 STARTUP QUIZ BONUS ROUND',
-        'description': f'{question["q"]}<br>Correct answer = +2,000 CHF bonus!',
-        'options': [{'id': opt['id'], 'text': opt['text'], 'data': {'correct': question['correct']}} for opt in question['options']]
-    }
-
-def dragons_den_event(self, company):
-    """Dragons' Den Switzerland - returns interactive event"""
-    cost = 500
-    
-    if company.balance < cost:
-        return f"📺 'Dragons' Den' invitation, but travel too expensive! Need {cost:,} CHF."
-    
-    return {
-        'type': 'interactive',
-        'event_name': 'dragons_den',
-        'title': '🦈 DRAGONS\' DEN SWITZERLAND',
-        'description': f'TV appearance chance!<br>Cost: {cost:,} CHF (travel, hotel)<br>50% Chance: +5,000 CHF investment<br>50% Chance: Embarrassment, -0.5 reputation<br>Your Budget: {company.balance:,} CHF',
-        'options': [
-            {'id': 'yes', 'text': 'Enter the Dragons\' Den', 'data': {'cost': cost}},
-            {'id': 'no', 'text': 'Decline invitation', 'data': {}}
+    def startup_quiz_event(self, company):
+        """Startup quiz - returns interactive event"""
+        questions = [
+            {"q": "What percentage of Swiss startups fail in the first 5 years?", 
+             "options": [{"id": "A", "text": "50%"}, {"id": "B", "text": "70%"}, {"id": "C", "text": "90%"}], "correct": "C"},
+            {"q": "What does 'MVP' mean in the startup world?", 
+             "options": [{"id": "A", "text": "Most Valuable Player"}, {"id": "B", "text": "Minimum Viable Product"}, {"id": "C", "text": "Maximum Venture Profit"}], "correct": "B"},
+            {"q": "Which city has the largest startup ecosystem in Switzerland?", 
+             "options": [{"id": "A", "text": "Zurich"}, {"id": "B", "text": "Geneva"}, {"id": "C", "text": "St. Gallen"}], "correct": "A"},
+            {"q": "What is the most famous nightclub in St. Gallen?", 
+             "options": [{"id": "A", "text": "Palazzo"}, {"id": "B", "text": "Trischli"}, {"id": "C", "text": "Einstein"}], "correct": "B"},
         ]
-    }
+        
+        question = random.choice(questions)
+        
+        return {
+            'type': 'interactive',
+            'event_name': 'quiz',
+            'title': '🧠 STARTUP QUIZ BONUS ROUND',
+            'description': f'{question["q"]}<br>Correct answer = +2,000 CHF bonus!',
+            'options': [{'id': opt['id'], 'text': opt['text'], 'data': {'correct': question['correct']}} for opt in question['options']]
+        }
+
+    def dragons_den_event(self, company):
+        """Dragons' Den Switzerland - returns interactive event"""
+        cost = 500
+        
+        if company.balance < cost:
+            return f"📺 'Dragons' Den' invitation, but travel too expensive! Need {cost:,} CHF."
+        
+        return {
+            'type': 'interactive',
+            'event_name': 'dragons_den',
+            'title': '🦈 DRAGONS\' DEN SWITZERLAND',
+            'description': f'TV appearance chance!<br>Cost: {cost:,} CHF (travel, hotel)<br>50% Chance: +5,000 CHF investment<br>50% Chance: Embarrassment, -0.5 reputation<br>Your Budget: {company.balance:,} CHF',
+            'options': [
+                {'id': 'yes', 'text': 'Enter the Dragons\' Den', 'data': {'cost': cost}},
+                {'id': 'no', 'text': 'Decline invitation', 'data': {}}
+            ]
+        }
 
     # ===== HUMOROUS MESSAGES =====
 
@@ -569,7 +569,7 @@ def dragons_den_event(self, company):
             achievements.append("⭐ 'Reputation King': More popular than Rösti on Sunday!")
         
         if company.product_quality > 3.0:
-            achievements.append("🔧 'Quality Guru': More precise than a Swiss watch!")
+            achievements.append("🔧  'Quality Guru': More precise than a Swiss watch!")
         
         if company.employees > 10:
             achievements.append("👥 'Team Builder': More employees than some mountain huts have beds!")
