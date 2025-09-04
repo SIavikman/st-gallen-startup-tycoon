@@ -4,8 +4,6 @@ import random
 import os
 from datetime import datetime
 
-# Deploy test
-# Import the game classes
 from startup_tycoon_main import Company, ActionType, StartupTycoonGame, Loan
 from swiss_events_manager import SwissEventManager
 
@@ -36,15 +34,13 @@ def init_db():
     conn.close()
 
 def save_score(company_dict, final_score):
-    """Score nur speichern wenn 12 Monate überlebt und nicht bankrott"""
-    # Nur speichern wenn nicht bankrott und 12 Monate überlebt
+    """Save score only if survived 12 months and not bankrupt"""
     if company_dict.get('is_bankrupt', True) or company_dict.get('months_survived', 0) < 12:
-        return  # Nicht speichern
+        return
         
     conn = sqlite3.connect('leaderboard.db')
     c = conn.cursor()
     
-    # Berechne outstanding debt
     outstanding_debt = sum(loan['amount'] for loan in company_dict.get('loans', []))
     
     c.execute('''
@@ -70,7 +66,7 @@ def save_score(company_dict, final_score):
     conn.close()
 
 def get_leaderboard(limit=10):
-    """Leaderboard aus Datenbank laden - nur Top 10"""
+    """Load leaderboard from database"""
     conn = sqlite3.connect('leaderboard.db')
     c = conn.cursor()
     c.execute('''
@@ -94,7 +90,7 @@ def get_leaderboard(limit=10):
     } for r in results]
 
 def company_to_dict(company):
-    """Convert Company object to dictionary for session storage."""
+    """Convert Company object to dictionary for session storage"""
     return {
         'owner_name': company.owner_name,
         'balance': company.balance,
@@ -113,13 +109,12 @@ def company_to_dict(company):
     }
 
 def dict_to_company(data):
-    """Convert dictionary back to Company object."""
+    """Convert dictionary back to Company object"""
     company = Company(data['owner_name'])
     for key, value in data.items():
         if key != 'loans':
             setattr(company, key, value)
     
-    # Restore loans
     company.loans = []
     for loan_data in data.get('loans', []):
         loan = Loan(loan_data['amount'], loan_data['months_remaining'], loan_data['monthly_payment'])
@@ -142,28 +137,24 @@ def about():
 
 @app.route('/start_game', methods=['POST'])
 def start_game():
-    """Spiel starten mit vollständiger Spiellogik"""
+    """Start game with complete logic"""
     player_name = request.form.get('player_name', '').strip()
     if not player_name:
-        return redirect(url_for('home', error='Name erforderlich'))
+        return redirect(url_for('home', error='Name required'))
     
-    # Erstelle neue Company mit vollständiger Spiellogik
     company = Company(player_name)
     
-    # Speichere in Session
     session['company'] = company_to_dict(company)
-    session['event_manager'] = True  # Flag dass EventManager verfügbar ist
     session['current_month'] = 1
     
     return redirect(url_for('game'))
 
 @app.route('/game')
 def game():
-    """Hauptspiel-Seite"""
+    """Main game page"""
     if 'company' not in session:
         return redirect(url_for('home'))
     
-    # Lade Company aus Session
     company_dict = session['company']
     current_month = session.get('current_month', 1)
     
@@ -173,80 +164,57 @@ def game():
 
 @app.route('/api/complete_turn', methods=['POST'])
 def complete_turn():
-    """Kompletten Spielzug abwickeln: Aktion → Event → Finanzen → Monatswechsel"""
+    """Complete game turn: Action -> Event -> Finances -> Month advance"""
     if 'company' not in session:
-        return jsonify({'success': False, 'error': 'Kein aktives Spiel'}), 400
+        return jsonify({'success': False, 'error': 'No active game'}), 400
     
     data = request.get_json()
     action_type = data.get('action')
     
-    # Lade Company aus Session
     company = dict_to_company(session['company'])
     current_month = session.get('current_month', 1)
     
-    # Erstelle Game instance
     game = StartupTycoonGame()
     event_manager = SwissEventManager()
     
     try:
-        # 1. Aktion ausführen
+        # 1. Execute action
         try:
             action_enum = ActionType(action_type)
         except ValueError:
-            return jsonify({'success': False, 'error': f'Ungültige Aktion: {action_type}'}), 400
+            return jsonify({'success': False, 'error': f'Invalid action: {action_type}'}), 400
         
-        # Hole die Action Details für die Kosten
         action = game.actions[action_enum]
         action_cost = action.cost
-        
-        # Balance vor der Aktion merken
         balance_before_action = company.balance
         
         action_result = game.execute_action(company, action_enum)
         
-       # 2. Random Event triggern (nur wenn nicht bankrott)
+        # 2. Trigger random event (only if not bankrupt)
         if not company.is_bankrupt:
             event_result = event_manager.trigger_random_event(company)
-            
-            # Check if it's an interactive event
-            if isinstance(event_result, dict) and event_result.get('type') == 'interactive':
-                # Store company state and return interactive event to frontend
-                session['company'] = company_to_dict(company)
-                session['pending_event'] = event_result
-                return jsonify({
-                    'success': True,
-                    'interactive_event': event_result,
-                    'company': company_to_dict(company)
-                })
         else:
-            event_result = "Unternehmen ist bankrott - keine Events mehr."
+            event_result = "Company is bankrupt - no more events."
             
-        # 3. Monatliche Finanzen verarbeiten (nur wenn nicht bankrott)
+        # 3. Process monthly finances (only if not bankrupt)
         if not company.is_bankrupt:
             company.month = current_month
-            
-            # Balance nach Event aber vor monatlichen Finanzen
             balance_after_event = company.balance
             
             finances = company.process_monthly_finances()
             loan_status = company.process_loan_payments()
             
-            # Neue Balance nach allen Änderungen
             balance_after_finances = company.balance
-            
-            # Berechne die einzelnen Änderungen
             event_change = balance_after_event - (balance_before_action - action_cost)
             
             finance_parts = [
-                f"Einnahmen: +{finances['revenue']:,} CHF",
-                f"Ausgaben: -{finances['expenses']:,} CHF"
+                f"Revenue: +{finances['revenue']:,} CHF",
+                f"Expenses: -{finances['expenses']:,} CHF"
             ]
             
-            # Nur anzeigen wenn tatsächlich investiert wurde
             if action_cost > 0:
-                finance_parts.append(f"Investiert: -{action_cost:,} CHF")
+                finance_parts.append(f"Invested: -{action_cost:,} CHF")
             
-            # Event-Änderung anzeigen (falls vorhanden)
             if event_change != 0:
                 if event_change > 0:
                     finance_parts.append(f"Event: +{event_change:,} CHF")
@@ -256,30 +224,27 @@ def complete_turn():
             if loan_status:
                 finance_parts.append(loan_status)
             
-            # Gesamtveränderung anzeigen
             total_change = balance_after_finances - balance_before_action
             if total_change >= 0:
-                finance_parts.append(f"Gesamte Veränderung: +{total_change:,} CHF")
+                finance_parts.append(f"Total Change: +{total_change:,} CHF")
             else:
-                finance_parts.append(f"Gesamte Veränderung: {total_change:,} CHF")
+                finance_parts.append(f"Total Change: {total_change:,} CHF")
             
-            finance_parts.append(f"Neue Balance: {balance_after_finances:,} CHF")
-            
+            finance_parts.append(f"New Balance: {balance_after_finances:,} CHF")
             finance_text = "\n".join(finance_parts)
         else:
-            finance_text = "Keine Finanzen - Unternehmen bankrott."
+            finance_text = "No finances - Company bankrupt."
         
-        # 4. Monat voranschreiten
+        # 4. Advance month
         current_month += 1
         session['current_month'] = current_month
         company.months_survived = current_month - 1
         
-        # 5. Prüfen ob Spiel zu Ende (NUR 12 Monate oder Bankrott oder zu viel Schulden)
+        # 5. Check if game over
         game_over = (current_month > 12 or 
                     company.is_bankrupt or 
                     company.balance < -5000)
         
-        # Session aktualisieren
         session['company'] = company_to_dict(company)
         
         return jsonify({
@@ -295,119 +260,24 @@ def complete_turn():
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)}), 500
 
-@app.route('/api/get_company_status', methods=['GET'])
-def get_company_status():
-    """API-Endpoint für Live Company-Status Updates"""
-    if 'company' not in session:
-        return jsonify({'success': False, 'error': 'Kein aktives Spiel'}), 400
-    
-    company_dict = session['company']
-    current_month = session.get('current_month', 1)
-    
-    # Berechne aktuellen Score
-    score = round((company_dict['balance'] + 
-             (company_dict['customers'] * 10) + 
-             (company_dict['reputation'] * 1000) + 
-             (company_dict['product_quality'] * 1000)),2)
-    
-    return jsonify({
-        'success': True,
-        'company': company_dict,
-        'current_month': current_month,
-        'score': int(score),
-        'game_over': current_month > 12 or company_dict.get('is_bankrupt', False)
-    })
-
-@app.route('/api/handle_special_events', methods=['POST'])
-def handle_special_events():
-    """API-Endpoint für interaktive Events"""
-    if 'company' not in session or 'pending_event' not in session:
-        return jsonify({'success': False, 'error': 'Kein aktives Event'}), 400
-    
-    data = request.get_json()
-    choice = data.get('choice')
-    
-    company = dict_to_company(session['company'])
-    event_data = session['pending_event']
-    event_manager = SwissEventManager()
-    
-    try:
-        result = ""
-        
-        if event_data['event_name'] == 'trade_fair':
-            cost = event_data['options'][0]['data'].get('cost', 1000)
-            if choice == 'yes':
-                company.balance -= cost
-                if random.random() < 0.5:
-                    customer_gain = random.randint(90, 110)
-                    company.customers += customer_gain
-                    result = f"🎉 Trade fair pitch successful! -{cost:,} CHF invested, +{customer_gain} enthusiastic customers won!"
-                else:
-                    result = f"😞 Trade fair pitch flopped! -{cost:,} CHF lost. Audience wasn't the target group..."
-            else:
-                result = "🚫 Trade fair pitch declined. Safety first!"
-                
-        elif event_data['event_name'] == 'quiz':
-            correct_answer = event_data['options'][0]['data']['correct']
-            if choice == correct_answer:
-                bonus = 2000
-                company.balance += bonus
-                result = f"🎉 Correct! +{bonus:,} CHF quiz bonus. You know your way around the startup world!"
-            else:
-                result = f"❌ Wrong! Correct answer was {correct_answer}. No bonus, but at least you learned something!"
-                
-        elif event_data['event_name'] == 'dragons_den':
-            cost = event_data['options'][0]['data'].get('cost', 500)
-            if choice == 'yes':
-                company.balance -= cost
-                if random.random() < 0.5:
-                    investment = 5000
-                    company.balance += investment
-                    company.reputation += random.uniform(0.3, 0.5)
-                    result = f"🦈 Dragons are thrilled! +{investment:,} CHF investment, TV fame boosts reputation! 'Deal!' 🤝"
-                else:
-                    company.reputation = max(0.1, company.reputation - random.uniform(0.4, 0.6))
-                    result = f"😬 Pitch went wrong! 'I'm out!' from all dragons. -{cost:,} CHF costs, reputation suffers. Embarrassing TV moment!"
-            else:
-                result = "🚫 'Dragons' Den' declined. No risk, no TV fame."
-        
-        # Clear pending event and save company
-        session.pop('pending_event', None)
-        session['company'] = company_to_dict(company)
-        
-        return jsonify({
-            'success': True,
-            'message': result,
-            'company': company_to_dict(company)
-        })
-        
-    except Exception as e:
-        return jsonify({'success': False, 'error': str(e)}), 500
-
 @app.route('/game_over')
 def game_over():
-    """Spielende-Seite anzeigen"""
+    """Show game end page"""
     if 'company' not in session:
         return redirect(url_for('home'))
     
     company_dict = session['company']
     
-    # Berechne final score
     final_score = (company_dict['balance'] + 
                   (company_dict['customers'] * 10) + 
                   (company_dict['reputation'] * 1000) + 
                   (company_dict['product_quality'] * 1000))
     
-    # Speichere Score in Datenbank (nur wenn nicht bankrott und 12 Monate überlebt)
     save_score(company_dict, int(final_score))
-    
-    # Lade Leaderboard
     leaderboard = get_leaderboard()
     
-    # Lösche Session
     session.pop('company', None)
     session.pop('current_month', None)
-    session.pop('event_manager', None)
     
     return render_template('game_over.html', 
                          company=company_dict,
@@ -416,21 +286,18 @@ def game_over():
 
 @app.errorhandler(404)
 def not_found_error(error):
-    return jsonify({'error': 'API-Endpoint nicht gefunden'}), 404
+    return jsonify({'error': 'API endpoint not found'}), 404
 
 @app.errorhandler(500)
 def internal_error(error):
-    return jsonify({'error': 'Interner Server-Fehler'}), 500
+    return jsonify({'error': 'Internal server error'}), 500
 
 @app.errorhandler(400)
 def bad_request_error(error):
-    return jsonify({'error': 'Ungültige Anfrage'}), 400
+    return jsonify({'error': 'Invalid request'}), 400
 
-# Datenbank bei jedem App-Start initialisieren (auch für Gunicorn)
 init_db()
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     app.run(debug=False, host='0.0.0.0', port=port)
-
-
