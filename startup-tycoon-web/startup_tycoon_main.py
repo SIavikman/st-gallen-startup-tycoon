@@ -148,7 +148,6 @@ class StartupTycoonGame:
     """Main game controller class for St. Gallen Startup Tycoon."""
     
     def __init__(self):
-        self.event_manager = SwissEventManager()
         
         # Define available actions
         self.actions = {
